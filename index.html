@@ -87,12 +87,17 @@
       (кристаллизуются чистые компоненты A и B). Линии ликвидуса рассчитываются по уравнению
       Шредера–ван Лаара. В версии 3.0 добавлено <b>конгруэнтно плавящееся стехиометрическое соединение
       A<sub>m</sub>B<sub>n</sub></b>: система распадается на две подсистемы (A–A<sub>m</sub>B<sub>n</sub>
-      и A<sub>m</sub>B<sub>n</sub>–B) с двумя эвтектиками.
+      и A<sub>m</sub>B<sub>n</sub>–B) с двумя эвтектиками. Версия 4.x добавляет полиморфизм
+      компонентов с перитектиками, кривые ДТА и <b>перетаскиваемые подписи</b> (потяните подпись
+      мышью — пунктирная линия-указатель покажет, к какой области или точке она относится;
+      двойной клик возвращает её на место).
       / Model: ideal simple eutectic with <b>zero mutual solid solubility</b>
       (pure A and B crystallize); liquidus lines are computed with the Schröder–van Laar equation.
       Version 3.0 adds a <b>congruently melting stoichiometric compound A<sub>m</sub>B<sub>n</sub></b>:
       the system splits into two subsystems (A–A<sub>m</sub>B<sub>n</sub> and
-      A<sub>m</sub>B<sub>n</sub>–B) with two eutectic points.
+      A<sub>m</sub>B<sub>n</sub>–B) with two eutectic points. Version 4.x adds component
+      polymorphism with peritectics, DTA curves and <b>draggable labels</b> (drag a label — a dashed
+      leader line shows which region or point it belongs to; double click puts it back).
     </p>
   </header>
 
@@ -111,6 +116,14 @@
         <span id="legend-ab" hidden><span class="chip" style="background:#FFA500"></span>Соединение / compound <b id="legend-ab-formula">AB</b> (orange)</span>
         <span><span class="chip" style="background:#ffb8c6"></span>Жидкость / Liquid</span>
         <span><span class="chip" style="background:#cfd2d6" id="legend-solid-chip"></span><span id="legend-solid">Твёрдое A+B / Solid A+B</span></span>
+        <!-- v4.1: полиморфные формы и перитектики / v4.1: polymorphic forms and peritectics -->
+        <span id="legend-poly" hidden>
+          <span class="chip" style="background:#9370DB"></span><b id="legend-alphaA">α-A</b> ■ (квадрат / square)
+          <span class="chip" style="background:#9370DB; transform:rotate(45deg); display:inline-block; margin-left:8px"></span><b id="legend-betaA">β-A</b> ◆ (ромб / diamond)
+          <span class="chip" style="background:#32CD32"></span><b id="legend-alphaB">α-B</b> ■
+          <span class="chip" style="background:#32CD32; transform:rotate(45deg); display:inline-block; margin-left:8px"></span><b id="legend-betaB">β-B</b> ◆
+          <span class="chip" style="background:#6a4fa3; height:3px; margin-left:8px"></span>перитектика / peritectic
+        </span>
       </div>
       <p class="footnote">
         Толстые линии — ликвидусы (фиолетовый — ветвь A, зелёный — ветвь B, оранжевый — ветви соединения),
@@ -119,11 +132,13 @@
         Продолжения ликвидусов ниже эвтектической точки (метастабильные области) не отображаются.
         Ось Y динамическая: верх шкалы = максимальная температура плавления + 10 °C, низ — чуть ниже солидуса; если выбранная точка выходит за шкалу, диаграмма автоматически растягивается.
         Кликните или потяните мышью по полю диаграммы, чтобы задать состав и температуру; наведите курсор на вертикальную линию соединения для подсказки.
+        Подписи можно перетаскивать мышью (пунктирная линия-указатель показывает, к какой области или точке подпись относится); двойной клик по подписи возвращает её на место, кнопка «⟲ Подписи» сбрасывает все смещения.
         / Thick lines are liquidus branches (purple — A, green — B, orange — the compound branches), dark horizontals are the solidus lines.
         In compound mode a vertical stoichiometric line and a second eutectic appear; compound crystals are orange hexagons.
         Metastable liquidus extensions below the eutectic point are not drawn.
         The Y axis is dynamic: the top of the scale is the highest melting point + 10 °C, the bottom is just below the solidus; the diagram stretches automatically when the selected point leaves the scale.
         Click or drag on the plot to pick composition and temperature; hover over the compound vertical line for a tooltip.
+        Labels can be dragged with the mouse (a dashed leader line shows which region or point a label refers to); double click restores a label, the "Labels" button resets all offsets.
       </p>
     </section>
 
@@ -133,6 +148,19 @@
       <div id="micro-container"></div>
     </section>
   </main>
+
+  <!-- v4.1: панель ДТА / v4.1: DTA panel -->
+  <section class="panel" id="dta-panel" hidden>
+    <h2>Кривая ДТА / DTA curve <span id="dta-title" style="font-weight:400; font-size:13px"></span></h2>
+    <div id="dta-container"></div>
+    <p class="footnote" id="dta-footnote">
+      Красные пики вниз — нагрев (эндотермические: плавление, β→α), синие вверх — охлаждение (экзотермические: кристаллизация, α→β).
+      Высота пика пропорциональна энтальпии перехода и доле превращённой фазы; максимальный пик нормирован на 80% высоты графика. Ширина пика условная (7 °C).
+      Пунктирные линии на диаграмме отмечают температуры переходов. / Red peaks point down — heating (endothermic: melting, β→α); blue peaks point up — cooling (exothermic: crystallization, α→β).
+      Peak height is proportional to the transition enthalpy and the transformed phase fraction; the tallest peak is normalized to 80% of the plot height. Peak width is nominal (7 °C).
+      Dashed lines on the phase diagram mark the transition temperatures.
+    </p>
+  </section>
 
   <!-- Нижняя панель: управление / Bottom panel: controls -->
   <section class="panel" id="controls-panel">
@@ -156,6 +184,34 @@
           <input type="number" id="in-dhAB" min="1" max="100000" step="1" value="20000">
         </label>
         <p class="hint" id="ab-formula">Формула: AB • x = 50.0% B</p>
+      </fieldset>
+      <!-- v4.1: полиморфизм компонента A / v4.1: polymorphism of component A -->
+      <fieldset class="poly-section" id="polyA-section">
+        <legend>Полиморфизм A / Polymorphism A</legend>
+        <label style="font-weight:600">Показать полиморфизм A / Show polymorphism A
+          <input type="checkbox" id="in-polyA" style="margin-left:6px; transform:scale(1.3); accent-color:#9370DB">
+        </label>
+        <label>Температура перехода α↔β / Transition temperature T_poly,A, °C (−100…3000)
+          <input type="number" id="in-tPolyA" min="-100" max="3000" step="1" value="300">
+        </label>
+        <label>Энтальпия перехода / Transition enthalpy ΔH_poly,A, Дж/моль (1…50000)
+          <input type="number" id="in-dhPolyA" min="1" max="50000" step="1" value="5000">
+        </label>
+        <p class="hint" id="polyA-hint">β-фаза: T_пл,эф = T_poly,A; ΔH_эф = ΔH_пл + ΔH_poly / β phase: effective T_m = T_poly; ΔH_eff = ΔH_fus + ΔH_poly</p>
+      </fieldset>
+      <!-- v4.1: полиморфизм компонента B / v4.1: polymorphism of component B -->
+      <fieldset class="poly-section" id="polyB-section">
+        <legend>Полиморфизм B / Polymorphism B</legend>
+        <label style="font-weight:600">Показать полиморфизм B / Show polymorphism B
+          <input type="checkbox" id="in-polyB" style="margin-left:6px; transform:scale(1.3); accent-color:#32CD32">
+        </label>
+        <label>Температура перехода α↔β / Transition temperature T_poly,B, °C (−100…3000)
+          <input type="number" id="in-tPolyB" min="-100" max="3000" step="1" value="250">
+        </label>
+        <label>Энтальпия перехода / Transition enthalpy ΔH_poly,B, Дж/моль (1…50000)
+          <input type="number" id="in-dhPolyB" min="1" max="50000" step="1" value="4000">
+        </label>
+        <p class="hint" id="polyB-hint">α — высокотемпературная форма, β — низкотемпературная / α — high-T form, β — low-T form</p>
       </fieldset>
       <fieldset>
         <legend>Названия компонентов / Component names</legend>
@@ -183,6 +239,17 @@
       </fieldset>
       <fieldset>
         <legend>Эксперимент / Experiment</legend>
+        <!-- v4.1: пресеты реальных систем / v4.1: real-system presets -->
+        <label>Пресет системы / System preset:
+          <select id="in-preset">
+            <option value="">— выбрать / choose —</option>
+            <option value="sn_pb">Олово–Свинец (β→α олова, 13 °C) / Tin–Lead</option>
+            <option value="fe_cu">Железо–Медь (α→γ железа, 912 °C) / Iron–Copper</option>
+            <option value="caffeine">Кофеин + Глутаровая кислота (сокристалл) / Cocrystal</option>
+            <option value="full">Оба полиморфизма + соединение / Both polymorphs + compound</option>
+            <option value="reset">Сброс к базовой эвтектике / Reset to basic eutectic</option>
+          </select>
+        </label>
         <label>Состав сплава / Alloy composition x(B): <b id="val-x">50.0%</b>
           <input type="range" id="in-x" min="0" max="100" step="0.5" value="50">
         </label>
@@ -194,8 +261,15 @@
           <button id="btn-save-diag">📷 Диаграмма PNG</button>
           <button id="btn-save-micro">📷 Микроструктура PNG</button>
           <button id="btn-share" title="Кодирует все параметры в URL / Encodes all parameters into the URL">🔗 Поделиться / Share</button>
+          <button id="btn-reset-labels" hidden title="Появляется после перетаскивания подписей: возвращает все подписи на места / Appears after dragging labels: puts all labels back">⟲ Подписи / Labels</button>
         </div>
-        <p class="hint">Клик по диаграмме = выбор состава и температуры / Click on the diagram to set composition and temperature</p>
+        <!-- v4.1: генератор кривых ДТА / v4.1: DTA curve generator -->
+        <div class="btns" style="margin-top:6px">
+          <button id="btn-dta" title="Строит кривую ДТА для текущего состава / Builds the DTA curve for the current composition">📈 Сгенерировать кривую ДТА / Generate DTA</button>
+          <button id="btn-dta-hide" hidden>✕ Скрыть кривую ДТА / Hide DTA</button>
+          <button id="btn-dta-csv" title="Скачать данные кривой ДТА / Download the DTA curve data">⬇ CSV</button>
+        </div>
+        <p class="hint" id="dta-hint">Состав для ДТА / DTA composition: <b id="dta-x">50.0%</b> B — кривая перестраивается при любом изменении / the curve redraws on any change</p>
       </fieldset>
     </div>
   </section>
@@ -219,6 +293,12 @@
       <div class="info-item"><span class="k">Состав эвтектики, % B / Eutectic composition, % B</span><span class="v" id="i-xe">—</span></div>
       <div class="info-item"><span class="k">Микроструктура (твёрдое состояние) / Microstructure (solid)</span><span class="v" id="i-struct">—</span></div>
       <div class="info-item"><span class="k">Материальный баланс / Material balance</span><span class="v" id="i-bal">—</span></div>
+      <!-- v4.1: полиморфизм и перитектики / v4.1: polymorphism and peritectics -->
+      <div class="info-item"><span class="k">Полиморфизм A (α ↔ β) / Polymorphism A</span><span class="v" id="i-polya">—</span></div>
+      <div class="info-item"><span class="k">Полиморфизм B (α ↔ β) / Polymorphism B</span><span class="v" id="i-polyb">—</span></div>
+      <div class="info-item"><span class="k">Перитектика Per_A (L + α ↔ β) / Peritectic Per_A</span><span class="v" id="i-pera">—</span></div>
+      <div class="info-item"><span class="k">Перитектика Per_B (L + α ↔ β) / Peritectic Per_B</span><span class="v" id="i-perb">—</span></div>
+      <div class="info-item"><span class="k">Пики ДТА (нагрев / heating) / DTA peaks</span><span class="v" id="i-dta">—</span></div>
     </div>
   </section>
 </div>
@@ -249,6 +329,12 @@ const COMPOUND_TOL = 0.35;        // Порог "состав = стехиоме
 const MN_MIN = 1, MN_MAX = 5;     // Допустимая стехиометрия / Allowed stoichiometry range
 const AB_ANIM_MS = 700;           // Длительность анимации "вырастания" горба / Hump growth animation duration, ms
 const AB_ANIM_OUT_MS = 380;       // Длительность обратной анимации / Reverse animation duration, ms
+/* v4.1: полиморфизм и ДТА / v4.1: polymorphism and DTA */
+const DH_POLY_MAX = 50000;        // Максимальная энтальпия полиморфного перехода / Max polymorphic enthalpy, Дж/моль
+const PER_IT_MAX = 200;           // Максимум итераций поиска перитектики / Max peritectic search iterations
+const POLY_ANIM_MS = 500;         // Анимация замены α→β кристаллов (ТЗ 9.2) / α→β crystal replacement animation (spec 9.2)
+const DTA_PEAK_WIDTH = 7;         // Условная ширина пика ДТА (ТЗ 3.3) / Nominal DTA peak width (spec 3.3), °C
+const DTA_H = 240;                // Высота холста ДТА / DTA canvas height (ширина в drawDTACurve / width set in drawDTACurve)
 
 /* Цвета: A — фиолетовый, B — зелёный (везде и всегда!)
  * Colors: A — purple, B — green (everywhere and always!) */
@@ -267,6 +353,11 @@ const COL = {
   ZONE_LAB: [255, 165, 0, 40],    // зона L+AB / L+AB zone (v3.0)
   ZONE_SOLID: [206, 209, 214, 150], // зона A+B / solid zone
   POINT: [226, 32, 32],           // интерактивная точка / interactive point
+  /* v4.1: полиморфизм и ДТА / v4.1: polymorphism and DTA */
+  PER_LINE: [106, 79, 163],       // перитектическая горизонталь / peritectic horizontal (dark violet-gray)
+  POLY_SOLID: [180, 180, 188, 170], // твёрдотельная линия α↔β (не на ликвидусе) / solid-state α↔β line (not on the liquidus)
+  DTA_HEAT: [220, 20, 60],        // #DC143C эндотермические пики (нагрев) / endothermic peaks (heating)
+  DTA_COOL: [65, 105, 225],       // #4169E1 экзотермические пики (охлаждение) / exothermic peaks (cooling)
 };
 
 /* ===== Состояние приложения / Application state ===== */
@@ -285,6 +376,16 @@ const state = {
   n: 1,                           // Стехиометрия по B / B stoichiometry
   TmAB_C: 500,                    // Температура плавления соединения / Compound melting point, °C
   dH_AB: 20000,                   // Энтальпия плавления соединения / Compound enthalpy of fusion, Дж/моль
+  /* --- v4.1: полиморфизм и ДТА / v4.1: polymorphism and DTA --- */
+  showPolyA: false,               // Чекбокс "Полиморфизм A" / "Polymorphism A" checkbox
+  TpolyA_C: 300,                  // Температура перехода α↔β компонента A / A polymorphic transition temperature, °C
+  dHpolyA: 5000,                  // Энтальпия перехода A / A transition enthalpy, Дж/моль
+  showPolyB: false,               // Чекбокс "Полиморфизм B" / "Polymorphism B" checkbox
+  TpolyB_C: 250,                  // Температура перехода α↔β компонента B / B polymorphic transition temperature, °C
+  dHpolyB: 4000,                  // Энтальпия перехода B / B transition enthalpy, Дж/моль
+  showDTA: false,                 // Видимость панели ДТА / DTA panel visibility
+  /* --- v4.2: перетаскиваемые подписи / v4.2: draggable labels --- */
+  labelOffsets: {},               // смещения подписей {id: {dx, dy}}, пиксели холста / label offsets, canvas px
 };
 
 /* Предупреждения от модели (нестабильное соединение и т.п.) /
@@ -563,6 +664,391 @@ function calculateSubsystems() {
   return model.compound;
 }
 
+/* ============================================================================
+ * v4.1: ПОЛИМОРФИЗМ КОМПОНЕНТОВ И ПЕРИТЕКТИКИ
+ * v4.1: COMPONENT POLYMORPHISM AND PERITECTICS
+ *
+ * Высокотемпературная модификация — α, низкотемпературная — β (ТЗ 1.3). Обе
+ * формы — чистый компонент (нулевая растворимость), поэтому трёхфазный
+ * инвариант L + α + β жёстко привязан к температуре перехода: равенство
+ * μ_α(T) = μ_β(T) возможно только при T = T_poly. Следствия:
+ *   1) перитектическая горизонталь СОВПАДАЕТ с изотермой T_poly;
+ *   2) точка перитектики x_per — пересечение α-ветви ликвидуса с изотермой
+ *      T_poly (находится делением отрезка пополам, ≤ PER_IT_MAX итераций);
+ *   3) перитектика видима на ликвидусе ⇔ T_poly выше эвтектической температуры
+ *      своей подсистемы (иначе α-ветвь обрывается на эвтектике выше T_poly, и
+ *      переход α↔β остаётся твёрдотельной линией ниже солидуса).
+ * Ниже перитектики ликвидус продолжается β-ветвью. β описывается эффективными
+ * параметрами (ТЗ 2.4): T_m,β^eff = T_poly, ΔH^eff = ΔH_пл + ΔH_poly, причём
+ * ветвь ЯКОРИТСЯ в точке перитектики:
+ *   ln(x_β^eff / x_β,per^eff) = (ΔH^eff / R)·(1/T_poly − 1/T),
+ * что тождественно точному термодинамическому ликвидусу β (μ_β = μ_жидк) в
+ * рамках того же приближения ΔS = const, что и уравнение Шрёдера–ван Лаара.
+ * The high-temperature modification is α, the low-temperature one is β
+ * (spec 1.3). Both forms are the pure component (zero solid solubility), so
+ * the three-phase invariant L + α + β is pinned to the transition temperature:
+ * μ_α(T) = μ_β(T) is only possible at T = T_poly. Consequences:
+ *   1) the peritectic horizontal COINCIDES with the T_poly isotherm;
+ *   2) the peritectic point x_per is the intersection of the α liquidus
+ *      branch with the T_poly isotherm (bisection, ≤ PER_IT_MAX iterations);
+ *   3) the peritectic is visible on the liquidus ⇔ T_poly is above the
+ *      eutectic temperature of its subsystem (otherwise the α branch ends at
+ *      the eutectic above T_poly and the α↔β transition remains a solid-state
+ *      line below the solidus).
+ * Below the peritectic the liquidus continues as the β branch. β is described
+ * by effective parameters (spec 2.4): T_m,β^eff = T_poly, ΔH^eff = ΔH_fus +
+ * ΔH_poly, with the branch ANCHORED at the peritectic point (formula above),
+ * which is identical to the exact thermodynamic β liquidus (μ_β = μ_liq)
+ * within the same ΔS = const approximation as Schröder–van Laar.
+ * ========================================================================== */
+
+/*
+ * Константа полиморфизма: K = (ΔH_пл/R)·(1/T_poly − 1/T_m) > 0.
+ * Полиморфный "псевдокомпонент" β имеет эффективную мольную долю в точке
+ * перитектики x_β,per^eff = exp(−K).
+ * Polymorphism constant: K = (ΔH_fus/R)·(1/T_poly − 1/T_m) > 0.
+ * The β pseudo-component has the effective mole fraction at the peritectic
+ * point x_β,per^eff = exp(−K).
+ */
+function polyK(dH_fus, Tpoly_K, Tm_K) {
+  return (dH_fus / R_GAS) * (1 / Tpoly_K - 1 / Tm_K);
+}
+
+/*
+ * Низкоуровневая β-ветвь ликвидуса по эффективной доле β-фазы (якорная формула).
+ * Low-level β liquidus branch for the effective fraction of the β phase
+ * (anchored formula, see the section comment above).
+ * Допустимо x_betaEff ≤ exp(−K); при больших долях ветвь метастабильна —
+ * возвращаем T_poly (экстраполяция не используется).
+ * Valid for x_betaEff ≤ exp(−K); larger fractions are metastable — T_poly is
+ * returned (the extrapolation is never used).
+ */
+function _liquidusT_beta(xBetaEff, Tpoly_K, dHeff, K) {
+  if (xBetaEff >= Math.exp(-K) || xBetaEff <= 0) return xBetaEff <= 0 ? 0 : Tpoly_K;
+  return 1 / (1 / Tpoly_K - (R_GAS / dHeff) * (Math.log(xBetaEff) + K));
+}
+
+/* Активна ли подсистемная (соединение) модель / Is the subsystem (compound) model active */
+function compoundDrawn() {
+  return state.showCompound && model && model.compound && !model.compound.unstable;
+}
+
+/* ----- β-ветви по ТЗ 6.1: liquidusTempBetaA / liquidusTempBetaB и α-псевдонимы /
+ * ----- β branches per spec 6.1: liquidusTempBetaA / liquidusTempBetaB and α aliases ----- */
+
+// Температура ликвидуса α_A (текущий режим) / Liquidus T of α_A (current mode)
+function liquidusTempAlphaA(xB_frac) {
+  return compoundDrawn() ? liquidusTempA_sub1(xB_frac) : liquidusTempA(xB_frac);
+}
+
+// Температура ликвидуса α_B (текущий режим) / Liquidus T of α_B (current mode)
+function liquidusTempAlphaB(xB_frac) {
+  return compoundDrawn() ? liquidusTempB_sub2(xB_frac) : liquidusTempB(xB_frac);
+}
+
+// β-ветвь A без соединения: x_A^eff = 1 − x_B / β branch of A without the compound
+function liquidusTempBetaA(xB_frac) {
+  const P = model.polyA;
+  return _liquidusT_beta(1 - xB_frac, P.Tpoly_K, P.dHeff, P.K);
+}
+
+// β-ветвь A в подсистеме A–AB: x_A^eff = (x_AB − x_B)/x_AB / β branch of A in the A–AB subsystem
+function liquidusTempBetaA_sub1(xB_frac) {
+  const P = model.polyA;
+  const xAeff = (model.compound.xABfrac - xB_frac) / model.compound.xABfrac;
+  return _liquidusT_beta(xAeff, P.Tpoly_K, P.dHeff, P.K);
+}
+
+// β-ветвь B без соединения: x_B^eff = x_B / β branch of B without the compound
+function liquidusTempBetaB(xB_frac) {
+  const P = model.polyB;
+  return _liquidusT_beta(xB_frac, P.Tpoly_K, P.dHeff, P.K);
+}
+
+// β-ветвь B в подсистеме AB–B: x_B^eff = (x_B − x_AB)/(1 − x_AB) / β branch of B in the AB–B subsystem
+function liquidusTempBetaB_sub2(xB_frac) {
+  const P = model.polyB;
+  const xBeff = (xB_frac - model.compound.xABfrac) / (1 - model.compound.xABfrac);
+  return _liquidusT_beta(xBeff, P.Tpoly_K, P.dHeff, P.K);
+}
+
+/*
+ * Эффективный ликвидус стороны A: α-ветвь левее точки перитектики (выше T_poly),
+ * β-ветвь правее (ниже T_poly). Непрерывен в точке перитектики.
+ * Effective A-side liquidus: the α branch left of the peritectic point (above
+ * T_poly), the β branch right of it (below T_poly). Continuous at the peritectic.
+ */
+function liquidusTempA_eff(xB_frac) {
+  const P = model.polyA;
+  if (!P || !P.visible) return liquidusTempAlphaA(xB_frac);
+  return xB_frac < P.xPerFrac ? liquidusTempAlphaA(xB_frac) : liquidusTempBetaA_cur(xB_frac);
+}
+
+// β-ветвь A в текущем режиме (с соединением или без) / β branch of A in the current mode
+function liquidusTempBetaA_cur(xB_frac) {
+  return compoundDrawn() ? liquidusTempBetaA_sub1(xB_frac) : liquidusTempBetaA(xB_frac);
+}
+
+// β-ветвь B в текущем режиме / β branch of B in the current mode
+function liquidusTempBetaB_cur(xB_frac) {
+  return compoundDrawn() ? liquidusTempBetaB_sub2(xB_frac) : liquidusTempBetaB(xB_frac);
+}
+
+/* Эффективный ликвидус стороны B (зеркально) / Effective B-side liquidus (mirrored) */
+function liquidusTempB_eff(xB_frac) {
+  const P = model.polyB;
+  if (!P || !P.visible) return liquidusTempAlphaB(xB_frac);
+  return xB_frac > P.xPerFrac ? liquidusTempAlphaB(xB_frac) : liquidusTempBetaB_cur(xB_frac);
+}
+
+/*
+ * calculatePeritecticA (ТЗ 6.1): точка перитектики Per_A — пересечение α-ветви
+ * ликвидуса с изотермой T_poly,A. Поиск делением отрезка пополам (≤200 итераций).
+ * calculatePeritecticA (spec 6.1): the Per_A peritectic point — intersection of
+ * the α liquidus branch with the T_poly,A isotherm. Bisection (≤200 iterations).
+ */
+function calculatePeritecticA() {
+  const P = model.polyA;
+  P.K = polyK(state.dH_A, P.Tpoly_K, model.TmA_K);
+  P.dHeff = state.dH_A + P.dHpoly;                 // ΔH^eff = ΔH_пл + ΔH_poly (ТЗ 2.4) / effective enthalpy (spec 2.4)
+  P.xAPerEff = Math.exp(-P.K);                     // x_A^eff в перитектике / effective A fraction at the peritectic
+  const useSub = compoundDrawn();
+  const Tal = x => useSub ? _liquidusT_A_sub1(x, model.compound.xABfrac, model.TmA_K, state.dH_A)
+                          : _liquidusT_A(x, model.TmA_K, state.dH_A);
+  let lo = 1e-9, hi = useSub ? model.compound.xABfrac - 1e-9 : 1 - 1e-9;
+  const f = x => Tal(x) - P.Tpoly_K;               // α-ветвь монотонно убывает / α branch decreases monotonically
+  if (f(hi) > 0) {                                 // пересечения нет внутри подсистемы / no crossing inside the subsystem
+    P.xPerFrac = hi; P.xPerPct = hi * 100;
+  } else {
+    for (let i = 0; i < PER_IT_MAX; i++) {
+      const mid = 0.5 * (lo + hi);
+      if (f(mid) > 0) lo = mid; else hi = mid;
+      if (hi - lo < 1e-13) break;
+    }
+    const xPer = 0.5 * (lo + hi);
+    P.xPerFrac = xPer; P.xPerPct = xPer * 100;
+  }
+  P.visible = false;                               // решает applyPolymorphism / decided by applyPolymorphism
+  P.Tper_C = P.Tpoly_C;                            // T_per = T_poly: инвариант L+α+β при T_poly / invariant pinned to T_poly
+}
+
+/*
+ * calculatePeritecticB (ТЗ 6.1): зеркально для компонента B (правая подсистема).
+ * calculatePeritecticB (spec 6.1): mirrored for component B (right subsystem).
+ */
+function calculatePeritecticB() {
+  const P = model.polyB;
+  P.K = polyK(state.dH_B, P.Tpoly_K, model.TmB_K);
+  P.dHeff = state.dH_B + P.dHpoly;
+  P.xAPerEff = Math.exp(-P.K);                     // x_B^eff в перитектике / effective B fraction at the peritectic
+  const useSub = compoundDrawn();
+  const Tal = x => useSub ? _liquidusT_B_sub2(x, model.compound.xABfrac, model.TmB_K, state.dH_B)
+                          : _liquidusT_B(x, model.TmB_K, state.dH_B);
+  let lo = useSub ? model.compound.xABfrac + 1e-9 : 1e-9, hi = 1 - 1e-9;
+  const f = x => Tal(x) - P.Tpoly_K;               // α_B-ветвь монотонно растёт / α_B branch grows monotonically
+  if (f(lo) > 0) {                                 // пересечения нет / no crossing
+    P.xPerFrac = lo; P.xPerPct = lo * 100;
+  } else {
+    for (let i = 0; i < PER_IT_MAX; i++) {
+      const mid = 0.5 * (lo + hi);
+      if (f(mid) < 0) lo = mid; else hi = mid;
+      if (hi - lo < 1e-13) break;
+    }
+    const xPer = 0.5 * (lo + hi);
+    P.xPerFrac = xPer; P.xPerPct = xPer * 100;
+  }
+  P.visible = false;
+  P.Tper_C = P.Tpoly_C;
+}
+
+/*
+ * Применение полиморфизма к эвтектикам: если перитектика видима (T_poly выше
+ * эвтектической температуры своей подсистемы), эвтектика ПЕРЕСЧИТЫВАЕТСЯ
+ * против β-ветви (новая эвтектическая реакция L → β + AB или L → β + B).
+ * Apply polymorphism to the eutectics: if the peritectic is visible (T_poly
+ * above the eutectic temperature of its subsystem), the eutectic is RECOMPUTED
+ * against the β branch (the new eutectic reaction L → β + AB or L → β + B).
+ */
+function applyPolymorphism() {
+  const useSub = compoundDrawn();
+  /* Простая система: стороны связаны общей эвтектикой → неподвижная итерация /
+   * Simple system: the sides share one eutectic → branch fixed-point iteration */
+  if (!useSub) { applyPolymorphismSimple(); return; }
+  /* --- Сторона A в подсистеме A–AB / A side in the A–AB subsystem --- */
+  if (model.polyA) {
+    const eut = useSub ? model.compound.e1 : model.eutectic;
+    if (model.polyA.Tpoly_C > eut.T_C + 0.01) {
+      const f = useSub ? x => liquidusTempBetaA_sub1(x) - liquidusTempAB_left(x)
+                       : x => liquidusTempBetaA(x) - liquidusTempB(x);
+      const lo = model.polyA.xPerFrac + 1e-9;
+      const hi = useSub ? model.compound.xABfrac - 1e-9 : 1 - 1e-9;
+      if (f(lo) > 0 && f(hi) < 0) {                // единственное пересечение / unique crossing
+        let a = lo, b = hi;
+        for (let i = 0; i < PER_IT_MAX; i++) {
+          const m = 0.5 * (a + b);
+          if (f(m) > 0) a = m; else b = m;
+          if (b - a < 1e-13) break;
+        }
+        const x = 0.5 * (a + b);
+        const T_K = useSub ? liquidusTempBetaA_sub1(x) : liquidusTempBetaA(x);
+        const eutNew = { xFrac: x, xPct: x * 100, T_K: T_K, T_C: k2c(T_K), degenerate: null, betaBranch: true };
+        if (useSub) model.compound.e1 = eutNew; else model.eutectic = eutNew;
+        model.polyA.visible = true;
+      } else model.polyA.visible = false;          // вырождение — защита / degenerate guard
+    } else model.polyA.visible = false;            // T_poly ниже эвтектики: только твёрдотельная линия / below the eutectic: solid-state line only
+  }
+  /* --- Сторона B / B side --- */
+  if (model.polyB) {
+    const eut = useSub ? model.compound.e2 : model.eutectic;
+    if (model.polyB.Tpoly_C > eut.T_C + 0.01) {
+      const f = useSub ? x => liquidusTempAB_right(x) - liquidusTempBetaB_sub2(x)
+                       : x => liquidusTempA(x) - liquidusTempBetaB(x);
+      const lo = useSub ? model.compound.xABfrac + 1e-9 : 1e-9;
+      const hi = model.polyB.xPerFrac - 1e-9;
+      if (f(lo) > 0 && f(hi) < 0) {
+        let a = lo, b = hi;
+        for (let i = 0; i < PER_IT_MAX; i++) {
+          const m = 0.5 * (a + b);
+          if (f(m) > 0) a = m; else b = m;
+          if (b - a < 1e-13) break;
+        }
+        const x = 0.5 * (a + b);
+        const T_K = useSub ? liquidusTempBetaB_sub2(x) : liquidusTempBetaB(x);
+        const eutNew = { xFrac: x, xPct: x * 100, T_K: T_K, T_C: k2c(T_K), degenerate: null, betaBranch: true };
+        if (useSub) model.compound.e2 = eutNew; else model.eutectic = eutNew;
+        model.polyB.visible = true;
+      } else model.polyB.visible = false;
+    } else model.polyB.visible = false;
+  }
+}
+
+/*
+ * Пересчёт эвтектики ПРОСТОЙ системы с полиморфизмом: стороны связаны общей
+ * эвтектикой, поэтому применяется неподвижная итерация по выбору ветвей:
+ * форма каждой стороны (α или β) определяется сравнением T_poly с текущей
+ * оценкой эвтектической температуры, после чего эвтектика пересчитывается
+ * против выбранных ветвей; повторяется до стабилизации (≤10 проходов).
+ * Физика: эвтектика L → (α|β)_A + (α|β)_B, где форма каждой стороны — та,
+ * что устойчива при эвтектической температуре (α выше T_poly, β ниже).
+ * Simple-system eutectic recomputation with polymorphism: the sides share one
+ * eutectic, so a fixed-point iteration over the branch choice is used: each
+ * side's form (α or β) is chosen by comparing T_poly with the current estimate
+ * of the eutectic temperature, the eutectic is then recomputed against the
+ * chosen branches; iterated until stable (≤10 passes). Physics: the eutectic
+ * L → (α|β)_A + (α|β)_B, each side's form being the one stable at the
+ * eutectic temperature (α above T_poly, β below).
+ */
+function applyPolymorphismSimple() {
+  let eut = model.eutectic;
+  let bA = false, bB = false;
+  for (let it = 0; it < 10; it++) {
+    const nA = !!(model.polyA && model.polyA.Tpoly_C > eut.T_C + 0.01);
+    const nB = !!(model.polyB && model.polyB.Tpoly_C > eut.T_C + 0.01);
+    if (nA === bA && nB === bB) break;               // ветви стабилизировались / branches stabilized
+    bA = nA; bB = nB;
+    const f = x => (bA ? liquidusTempBetaA(x) : liquidusTempA(x))
+                 - (bB ? liquidusTempBetaB(x) : liquidusTempB(x));
+    const lo = 1e-9, hi = 1 - 1e-9;
+    const Tleft = bA ? liquidusTempBetaA(lo) : liquidusTempA(lo);
+    const Tright = bB ? liquidusTempBetaB(hi) : liquidusTempB(hi);
+    if (f(lo) <= 0) {
+      eut = { xFrac: lo, xPct: lo * 100, T_K: Tleft, T_C: k2c(Tleft), degenerate: 'A', betaBranch: bA || bB };
+    } else if (f(hi) >= 0) {
+      eut = { xFrac: hi, xPct: hi * 100, T_K: Tright, T_C: k2c(Tright), degenerate: 'B', betaBranch: bA || bB };
+    } else {
+      let a = lo, b = hi;
+      for (let i = 0; i < PER_IT_MAX; i++) {
+        const m = 0.5 * (a + b);
+        if (f(m) > 0) a = m; else b = m;
+        if (b - a < 1e-13) break;
+      }
+      const x = 0.5 * (a + b);
+      const T_K = bA ? liquidusTempBetaA(x) : liquidusTempA(x);
+      eut = { xFrac: x, xPct: x * 100, T_K: T_K, T_C: k2c(T_K), degenerate: null, betaBranch: bA || bB };
+    }
+  }
+  model.eutectic = eut;
+  if (model.polyA) model.polyA.visible = bA;         // видима ⟺ β-ветвь доходит до эвтектики / visible ⟺ the β branch reaches the eutectic
+  if (model.polyB) model.polyB.visible = bB;
+}
+
+/*
+ * Эффективный обратный расчёт стороны A: состав жидкости (мол.% B) на
+ * действующей ветви. Выше T_poly — α-ветвь, ниже — β-ветвь (якорная формула).
+ * Effective inverse calculation for the A side: liquid composition (mol.% B)
+ * on the active branch. Above T_poly — the α branch, below — the β branch.
+ */
+function liquidCompositionA_eff(T_K) {
+  const P = model.polyA;
+  const useSub = compoundDrawn();
+  if (!P || !P.visible || T_K >= P.Tpoly_K) {
+    /* α-ветвь / α branch */
+    const xA = Math.exp((state.dH_A / R_GAS) * (1 / model.TmA_K - 1 / T_K));
+    return useSub ? model.compound.xABpct * (1 - xA) : (1 - xA) * 100;
+  }
+  /* β-ветвь: x_A^eff = exp(−K)·exp((ΔH^eff/R)(1/T_poly − 1/T)) / β branch */
+  const xAeff = P.xAPerEff * Math.exp((P.dHeff / R_GAS) * (1 / P.Tpoly_K - 1 / T_K));
+  return useSub ? model.compound.xABpct * (1 - xAeff) : (1 - xAeff) * 100;
+}
+
+/* Эффективный обратный расчёт стороны B (зеркально) / Effective inverse for the B side (mirrored) */
+function liquidCompositionB_eff(T_K) {
+  const P = model.polyB;
+  const useSub = compoundDrawn();
+  if (!P || !P.visible || T_K >= P.Tpoly_K) {
+    const xB = Math.exp((state.dH_B / R_GAS) * (1 / model.TmB_K - 1 / T_K));
+    return useSub ? model.compound.xABpct + (100 - model.compound.xABpct) * xB : xB * 100;
+  }
+  const xBeff = P.xAPerEff * Math.exp((P.dHeff / R_GAS) * (1 / P.Tpoly_K - 1 / T_K));
+  return useSub ? model.compound.xABpct + (100 - model.compound.xABpct) * xBeff : xBeff * 100;
+}
+
+/* ============================================================================
+ * v4.1: ИМЕНОВАННЫЕ ФАЗЫ (ПОЛЬЗОВАТЕЛЬСКИЕ НАЗВАНИЯ, ТЗ 4)
+ * v4.1: NAMED PHASES (USER-DEFINED NAMES, SPEC 4)
+ * ========================================================================== */
+
+/*
+ * Название полиморфной модификации (ТЗ 6.1): formatPolymorphName("Гексан", "alpha")
+ * → "α-Гексан". Греческие буквы — Unicode, p5.js отображает их корректно.
+ * Polymorphic modification name (spec 6.1): formatPolymorphName("Hexane", "alpha")
+ * → "α-Hexane". Greek letters are Unicode and render fine in p5.js.
+ */
+function formatPolymorphName(componentName, polymorphType) {
+  return (polymorphType === 'beta' ? 'β-' : 'α-') + componentName;
+}
+
+/*
+ * Название фазы по её типу (ТЗ 6.1). phaseType:
+ * 'A' | 'B' — компоненты; 'AB' — соединение; 'alphaA' | 'betaA' | 'alphaB' | 'betaB'
+ * — полиморфные модификации; 'liquid' — жидкость.
+ * Phase name by its type (spec 6.1); see the list above for the keys.
+ */
+function getPhaseName(phaseType) {
+  switch (phaseType) {
+    case 'A': return state.nameA;
+    case 'B': return state.nameB;
+    case 'AB': return (model && model.compound) ? model.compound.formula : getFormulaString(state.m, state.n);
+    case 'alphaA': return formatPolymorphName(state.nameA, 'alpha');
+    case 'betaA': return formatPolymorphName(state.nameA, 'beta');
+    case 'alphaB': return formatPolymorphName(state.nameB, 'alpha');
+    case 'betaB': return formatPolymorphName(state.nameB, 'beta');
+    case 'liquid': return 'Жидкость / Liquid';
+    default: return phaseType;
+  }
+}
+
+/*
+ * Обрезка длинных названий для подписей на диаграмме (ТЗ 4.4: >15 символов →
+ * многоточие). Спецсимволы и формулы (например "C₆H₁₄") проходят как есть.
+ * Truncate long names for diagram labels (spec 4.4: >15 chars → ellipsis).
+ * Special characters and formulas (e.g. "C₆H₁₄") pass through unchanged.
+ */
+function truncName(s, max) {
+  max = max || 15;
+  return s.length > max ? s.slice(0, max - 1) + '…' : s;
+}
+
 /*
  * Фазовое состояние в режиме соединения: подсистемы A–AB и AB–B.
  * Phase state in compound mode: A–AB and AB–B subsystems.
@@ -612,9 +1098,9 @@ function computePhaseCompound(xBpct, T_C) {
   if (nearEut) {
     ph.Tliq_C = e.T_C;
   } else if (inSub1) {
-    ph.Tliq_C = k2c(x < e.xPct ? liquidusTempA_sub1(x / 100) : liquidusTempAB_left(x / 100));
+    ph.Tliq_C = k2c(x < e.xPct ? liquidusTempA_eff(x / 100) : liquidusTempAB_left(x / 100));
   } else {
-    ph.Tliq_C = k2c(x < e.xPct ? liquidusTempAB_right(x / 100) : liquidusTempB_sub2(x / 100));
+    ph.Tliq_C = k2c(x < e.xPct ? liquidusTempAB_right(x / 100) : liquidusTempB_eff(x / 100));
   }
 
   /* Состав равен эвтектическому / Composition equals the eutectic */
@@ -643,10 +1129,9 @@ function computePhaseCompound(xBpct, T_C) {
   if (T_C > e.T_C) {
     const T_K = c2k(T_C);
     if (inSub1 && x < e.xPct) {
-      /* Кристаллизуется A; жидкость обогащается AB / A crystallizes; liquid enriched in AB */
+      /* Кристаллизуется A (α или β); жидкость обогащается AB / A (α or β) crystallizes; liquid enriched in AB */
       ph.kind = 'L+A';
-      const xAeff = Math.exp((state.dH_A / R_GAS) * (1 / model.TmA_K - 1 / T_K));
-      ph.xLiquid = c.xABpct * (1 - xAeff);
+      ph.xLiquid = liquidCompositionA_eff(T_K);
       ph.fSolidA = (ph.xLiquid - x) / ph.xLiquid * 100;      // рычаг: тв. A при x=0 / lever rule
     } else if (inSub1) {
       /* Кристаллизуется AB; жидкость обогащается A / AB crystallizes; liquid enriched in A */
@@ -661,10 +1146,9 @@ function computePhaseCompound(xBpct, T_C) {
       ph.xLiquid = 100 - (100 - c.xABpct) * xABeff;
       ph.fSolidAB = (ph.xLiquid - x) / (ph.xLiquid - c.xABpct) * 100;
     } else {
-      /* Кристаллизуется B; жидкость обогащается AB / B crystallizes; liquid enriched in AB */
+      /* Кристаллизуется B (α или β); жидкость обогащается AB / B (α or β) crystallizes; liquid enriched in AB */
       ph.kind = 'L+B';
-      const xBeff = Math.exp((state.dH_B / R_GAS) * (1 / model.TmB_K - 1 / T_K));
-      ph.xLiquid = c.xABpct + (100 - c.xABpct) * xBeff;
+      ph.xLiquid = liquidCompositionB_eff(T_K);
       ph.fSolidB = (x - ph.xLiquid) / (100 - ph.xLiquid) * 100;
     }
     ph.fLiquid = 100 - ph.fSolidA - ph.fSolidB - ph.fSolidAB;
@@ -713,9 +1197,20 @@ function computePhaseCompound(xBpct, T_C) {
 function computePhase(xBpct, T_C) {
   /* v3.0: в режиме соединения фазы считаются по подсистемам /
    * v3.0: in compound mode phases are computed per subsystem */
-  if (state.showCompound && model.compound && !model.compound.unstable) {
-    return computePhaseCompound(xBpct, T_C);
-  }
+  const ph = (state.showCompound && model.compound && !model.compound.unstable)
+    ? computePhaseCompound(xBpct, T_C)
+    : computePhaseSimple(xBpct, T_C);
+  /* v4.1: полиморфная форма каждого компонента в данной точке:
+   * α выше T_poly, β ниже (замена кристаллов в микроструктуре, ТЗ 2.6) /
+   * v4.1: polymorphic form of each component at this point:
+   * α above T_poly, β below (crystal replacement in the microstructure, spec 2.6) */
+  ph.aForm = (model.polyA && T_C < model.polyA.Tper_C - 1e-9) ? 'beta' : 'alpha';
+  ph.bForm = (model.polyB && T_C < model.polyB.Tper_C - 1e-9) ? 'beta' : 'alpha';
+  return ph;
+}
+
+/* Простая эвтектическая система без соединения / Simple eutectic system without the compound */
+function computePhaseSimple(xBpct, T_C) {
   const eut = model.eutectic;
   const x = clamp(xBpct, 0, 100);
   /* Результирующий объект / Result object */
@@ -753,7 +1248,7 @@ function computePhase(xBpct, T_C) {
 
   /* Температура ликвидуса для текущего состава / Liquidus temperature for this composition */
   ph.Tliq_C = nearEut ? eut.T_C
-    : k2c(isLeft ? liquidusTempA(x / 100) : liquidusTempB(x / 100));
+    : k2c(isLeft ? liquidusTempA_eff(x / 100) : liquidusTempB_eff(x / 100));
 
   /* Состав равен эвтектическому / Composition equals eutectic */
   if (nearEut) {
@@ -776,17 +1271,17 @@ function computePhase(xBpct, T_C) {
    * Between liquidus and solidus — two-phase region */
   if (T_C > eut.T_C) {
     if (isLeft) {
-      /* Кристаллизуется чистый A; жидкость обогащается B (x_liq > x) /
-       * Pure A crystallizes; liquid enriched in B (x_liq > x) */
+      /* Кристаллизуется чистый A (α или β); жидкость обогащается B (x_liq > x) /
+       * Pure A (α or β) crystallizes; liquid enriched in B (x_liq > x) */
       ph.kind = 'L+A';
-      ph.xLiquid = liquidCompositionAtTemp(c2k(T_C), 'A') * 100;
+      ph.xLiquid = liquidCompositionA_eff(c2k(T_C));
       ph.fSolidA = (ph.xLiquid - x) / ph.xLiquid * 100;   // x_solid = 0 → правило рычага / lever rule
       ph.fLiquid = 100 - ph.fSolidA;
     } else {
-      /* Кристаллизуется чистый B; жидкость обогащается A (x_liq < x) /
-       * Pure B crystallizes; liquid enriched in A (x_liq < x) */
+      /* Кристаллизуется чистый B (α или β); жидкость обогащается A (x_liq < x) /
+       * Pure B (α or β) crystallizes; liquid enriched in A (x_liq < x) */
       ph.kind = 'L+B';
-      ph.xLiquid = liquidCompositionAtTemp(c2k(T_C), 'B') * 100;
+      ph.xLiquid = liquidCompositionB_eff(c2k(T_C));
       ph.fSolidB = (x - ph.xLiquid) / (100 - ph.xLiquid) * 100; // x_solid = 100 / pure B
       ph.fLiquid = 100 - ph.fSolidB;
     }
@@ -856,6 +1351,9 @@ function recompute() {
     TmB_K: c2k(state.TmB_C),
     TmAB_K: c2k(state.TmAB_C),      // v3.0: температура плавления соединения / compound melting point
     compound: null,
+    polyA: null,                    // v4.1: модель полиморфизма A / polymorphism model A
+    polyB: null,                    // v4.1: модель полиморфизма B / polymorphism model B
+    dta: null,                      // v4.1: данные кривой ДТА / DTA curve data
   };
   /* Точка эвтектики / Eutectic point */
   model.eutectic = calculateEutectic();
@@ -868,12 +1366,36 @@ function recompute() {
         ' термодинамически неустойчиво при заданных параметрах (T_пл соединения не выше эвтектических температур) — режим соединения не отрисован / the compound is thermodynamically unstable (melting point below the eutectics) — compound mode not drawn');
     }
   }
+  /* v4.1: полиморфизм — валидация, перитектики, пересчёт эвтектик /
+   * v4.1: polymorphism — validation, peritectics, eutectic recomputation */
+  if (state.showPolyA) {
+    model.polyA = { on: true, Tpoly_C: state.TpolyA_C, Tpoly_K: c2k(state.TpolyA_C), dHpoly: state.dHpolyA };
+    if (state.TpolyA_C >= state.TmA_C) {
+      model.polyA.Tpoly_C = state.TmA_C - 1;
+      model.polyA.Tpoly_K = c2k(model.polyA.Tpoly_C);
+      modelWarnings.push('T_poly,A ≥ T_пл A: переход невозможен, в модели установлено T_пл − 1 °C / T_poly,A ≥ T_m,A: transition impossible, T_m − 1 °C used in the model');
+    }
+    calculatePeritecticA();
+  }
+  if (state.showPolyB) {
+    model.polyB = { on: true, Tpoly_C: state.TpolyB_C, Tpoly_K: c2k(state.TpolyB_C), dHpoly: state.dHpolyB };
+    if (state.TpolyB_C >= state.TmB_C) {
+      model.polyB.Tpoly_C = state.TmB_C - 1;
+      model.polyB.Tpoly_K = c2k(model.polyB.Tpoly_C);
+      modelWarnings.push('T_poly,B ≥ T_пл B: переход невозможен, в модели установлено T_пл − 1 °C / T_poly,B ≥ T_m,B: transition impossible, T_m − 1 °C used in the model');
+    }
+    calculatePeritecticB();
+  }
+  if (model.polyA || model.polyB) applyPolymorphism();
   /* Динамический диапазон оси Y (пересчитывается при каждом изменении) /
    * Dynamic Y-axis range (recomputed on every change) */
   updateViewRange();
   /* Фазовое состояние выбранной точки / Phase state of the selected point */
   model.phase = computePhase(state.xB, state.T_C);
   model.balance = checkBalance(model.phase);
+  /* v4.1: кривая ДТА для текущего состава (если панель открыта) /
+   * v4.1: DTA curve for the current composition (when the panel is open) */
+  if (state.showDTA) model.dta = generateDTACurve();
   /* Отладочный вывод в консоль / Debug output to console */
   if (model.balance !== null) {
     console.log('[balance] x =', state.xB.toFixed(2) + '%',
@@ -896,6 +1418,13 @@ function cacheElements() {
    'in-m', 'in-n', 'in-tmAB', 'in-dhAB', 'in-showAB', 'ab-formula',
    'i-sub', 'i-fsab', 'i-comp', 'i-e1', 'i-e2',
    'legend-ab', 'legend-ab-formula', 'legend-solid', 'btn-share', 'tooltip', 'toast',
+   /* v4.1 / v4.1 */
+   'in-polyA', 'in-tPolyA', 'in-dhPolyA', 'in-polyB', 'in-tPolyB', 'in-dhPolyB',
+   'in-preset', 'btn-dta', 'btn-dta-hide', 'btn-dta-csv', 'dta-x', 'dta-panel', 'dta-title',
+   'i-polya', 'i-polyb', 'i-pera', 'i-perb', 'i-dta',
+   'legend-poly', 'legend-alphaA', 'legend-betaA', 'legend-alphaB', 'legend-betaB',
+   /* v4.2 / v4.2 */
+   'btn-reset-labels',
    ].forEach(id => {
     el[id] = document.getElementById(id);
   });
@@ -921,6 +1450,11 @@ const NUM_FIELDS = [
   /* v3.0: параметры соединения / v3.0: compound parameters */
   { id: 'in-tmAB', key: 'TmAB_C', min: T_MIN_C, max: T_MAX_C, label: 'T_пл(соед.)' },
   { id: 'in-dhAB', key: 'dH_AB', min: DH_MIN, max: DH_MAX, label: 'ΔH_пл(соед.)', isDh: true },
+  /* v4.1: параметры полиморфизма (ТЗ 2.1) / v4.1: polymorphism parameters (spec 2.1) */
+  { id: 'in-tPolyA', key: 'TpolyA_C', min: T_MIN_C, max: T_MAX_C, label: 'T_poly(A)' },
+  { id: 'in-tPolyB', key: 'TpolyB_C', min: T_MIN_C, max: T_MAX_C, label: 'T_poly(B)' },
+  { id: 'in-dhPolyA', key: 'dHpolyA', min: DH_MIN, max: DH_POLY_MAX, label: 'ΔH_poly(A)', isDh: true },
+  { id: 'in-dhPolyB', key: 'dHpolyB', min: DH_MIN, max: DH_POLY_MAX, label: 'ΔH_poly(B)', isDh: true },
 ];
 
 /*
@@ -988,6 +1522,18 @@ function commitNumericFields() {
     state[f.key] = v;
     el[f.id].value = String(v);
   });
+  /* v4.1: T_poly должна быть ниже T_пл своего компонента (ТЗ 2.1) /
+   * v4.1: T_poly must be below the melting point of its component (spec 2.1) */
+  if (state.TpolyA_C >= state.TmA_C) {
+    state.TpolyA_C = state.TmA_C - 1;
+    el['in-tPolyA'].value = String(state.TpolyA_C);
+    warn.push('T_poly,A ≥ T_пл(A) — переход невозможен, установлено T_пл − 1 °C / T_poly,A ≥ T_m,A — transition impossible, T_m − 1 °C set');
+  }
+  if (state.TpolyB_C >= state.TmB_C) {
+    state.TpolyB_C = state.TmB_C - 1;
+    el['in-tPolyB'].value = String(state.TpolyB_C);
+    warn.push('T_poly,B ≥ T_пл(B) — переход невозможен, установлено T_пл − 1 °C / T_poly,B ≥ T_m,B — transition impossible, T_m − 1 °C set');
+  }
   inputWarnings = warn;
   recomputeAll();
 }
@@ -1061,6 +1607,10 @@ function readControls() {
   readMnFields(warn);
   state.showCompound = el['in-showAB'].checked;
 
+  /* --- v4.1: чекбоксы полиморфизма / v4.1: polymorphism checkboxes --- */
+  state.showPolyA = el['in-polyA'].checked;
+  state.showPolyB = el['in-polyB'].checked;
+
   /* --- Слайдеры состава и температуры / Composition and temperature sliders --- */
   const xv = parseFloat(el['in-x'].value);
   if (!isNaN(xv)) state.xB = clamp(xv, 0, 100);
@@ -1077,33 +1627,37 @@ function syncInputs() {
   el['val-x'].textContent = state.xB.toFixed(1) + '%';
   el['val-T'].textContent = state.T_C.toFixed(0) + ' °C';
   syncFormulaLabel();               // v3.0: подпись формулы соединения / compound formula label
+  el['dta-x'].textContent = state.xB.toFixed(1) + '%';   // v4.1: индикатор состава ДТА / DTA composition indicator
 }
 
 /* Текст фазового состояния / Phase state text */
 function phaseStateText(ph) {
   const nA = state.nameA, nB = state.nameB;
   const F = (model && model.compound) ? model.compound.formula : getFormulaString(state.m, state.n);
+  /* v4.1: имена фаз с полиморфной формой (ТЗ 4.2) / v4.1: phase names with the polymorphic form (spec 4.2) */
+  const nAcr = (state.showPolyA && model && model.polyA) ? formatPolymorphName(nA, ph.aForm) : nA;
+  const nBcr = (state.showPolyB && model && model.polyB) ? formatPolymorphName(nB, ph.bForm) : nB;
   switch (ph.kind) {
     case 'LIQUID':
       return ph.pure === 'A' ? 'Жидкость (расплав ' + nA + ') / Liquid (pure ' + nA + ')'
            : ph.pure === 'B' ? 'Жидкость (расплав ' + nB + ') / Liquid (pure ' + nB + ')'
            : ph.pure === 'AB' ? 'Жидкость (расплав ' + F + ') / Liquid (pure ' + F + ')'
            : 'Жидкость / Liquid';
-    case 'L+A': return 'Жидкость + твёрдый ' + nA + ' / Liquid + Solid A';
-    case 'L+B': return 'Жидкость + твёрдый ' + nB + ' / Liquid + Solid B';
+    case 'L+A': return 'Жидкость + твёрдый ' + nAcr + ' / Liquid + Solid ' + nAcr;
+    case 'L+B': return 'Жидкость + твёрдый ' + nBcr + ' / Liquid + Solid ' + nBcr;
     case 'L+AB': return 'Жидкость + твёрдое ' + F + ' / Liquid + Solid ' + F;
     case 'SOLID':
-      if (ph.pure === 'A') return 'Твёрдый чистый ' + nA + ' / Pure solid A';
-      if (ph.pure === 'B') return 'Твёрдый чистый ' + nB + ' / Pure solid B';
+      if (ph.pure === 'A') return 'Твёрдый чистый ' + nAcr + ' / Pure solid ' + nAcr;
+      if (ph.pure === 'B') return 'Твёрдый чистый ' + nBcr + ' / Pure solid ' + nBcr;
       if (ph.pure === 'AB') return 'Твёрдое чистое соединение ' + F + ' / Pure solid compound ' + F;
       if (ph.eutecticStructure) {
         return ph.eutecticType === 'AB+B'
-          ? 'Твёрдое: эвтектика (' + F + '+B) / Solid: eutectic (' + F + '+B)'
-          : 'Твёрдое: эвтектика (A+' + F + ') / Solid: eutectic (A+' + F + ')';
+          ? 'Твёрдое: эвтектика (' + F + '+' + nBcr + ') / Solid: eutectic (' + F + '+' + nBcr + ')'
+          : 'Твёрдое: эвтектика (' + nAcr + '+' + F + ') / Solid: eutectic (' + nAcr + '+' + F + ')';
       }
-      if (ph.eutecticType === 'AB+B') return 'Твёрдое: ' + F + ' + ' + nB + ' / Solid: ' + F + ' + B';
-      if (ph.eutecticType === 'A+AB') return 'Твёрдое: ' + nA + ' + ' + F + ' / Solid: A + ' + F;
-      return 'Твёрдое: ' + nA + ' + ' + nB + ' / Solid: A + B';
+      if (ph.eutecticType === 'AB+B') return 'Твёрдое: ' + F + ' + ' + nBcr + ' / Solid: ' + F + ' + ' + nBcr;
+      if (ph.eutecticType === 'A+AB') return 'Твёрдое: ' + nAcr + ' + ' + F + ' / Solid: ' + nAcr + ' + ' + F;
+      return 'Твёрдое: ' + nAcr + ' + ' + nBcr + ' / Solid: ' + nAcr + ' + ' + nBcr;
   }
   return '—';
 }
@@ -1176,6 +1730,46 @@ function updateInfo() {
     el['i-bal'].textContent = (ok ? '✓ сходится / converges' : '✗ НЕ сходится / FAILS') + ' (Δ = ' + model.balance.toExponential(1) + ')';
     el['i-bal'].className = 'v' + (ok ? ' ok' : '');
   }
+  /* v4.1: полиморфизм, перитектики и пики ДТА (ТЗ 5.4) /
+   * v4.1: polymorphism, peritectics and DTA peaks (spec 5.4) */
+  el['legend-poly'].hidden = !(state.showPolyA || state.showPolyB);
+  if (state.showPolyA && model.polyA) {
+    const P = model.polyA;
+    el['legend-alphaA'].textContent = getPhaseName('alphaA');
+    el['legend-betaA'].textContent = getPhaseName('betaA');
+    el['i-polya'].textContent = 'T_poly = ' + P.Tpoly_C.toFixed(0) + ' °C, ΔH = ' + state.dHpolyA +
+      ' Дж/моль • текущая форма / current form: ' + (ph.aForm === 'beta' ? 'β' : 'α');
+    el['i-pera'].textContent = P.visible
+      ? 'x = ' + P.xPerPct.toFixed(1) + '% B, T = ' + P.Tper_C.toFixed(1) + ' °C — инвариант L + α + β / invariant'
+      : 'не видима на ликвидусе (T_poly ниже эвтектики ' + ((state.showCompound && comp) ? 'E1' : 'эвтектики') +
+        ') — только твёрдотельный переход при ' + P.Tpoly_C.toFixed(0) + ' °C / not on the liquidus — solid-state transition only';
+  } else {
+    el['i-polya'].textContent = '— (режим выключен / mode off)';
+    el['i-pera'].textContent = '—';
+  }
+  if (state.showPolyB && model.polyB) {
+    const Q = model.polyB;
+    el['legend-alphaB'].textContent = getPhaseName('alphaB');
+    el['legend-betaB'].textContent = getPhaseName('betaB');
+    el['i-polyb'].textContent = 'T_poly = ' + Q.Tpoly_C.toFixed(0) + ' °C, ΔH = ' + state.dHpolyB +
+      ' Дж/моль • текущая форма / current form: ' + (ph.bForm === 'beta' ? 'β' : 'α');
+    el['i-perb'].textContent = Q.visible
+      ? 'x = ' + Q.xPerPct.toFixed(1) + '% B, T = ' + Q.Tper_C.toFixed(1) + ' °C — инвариант L + α + β / invariant'
+      : 'не видима на ликвидусе (T_poly ниже эвтектики ' + ((state.showCompound && comp) ? 'E2' : 'эвтектики') +
+        ') — только твёрдотельный переход при ' + Q.Tpoly_C.toFixed(0) + ' °C / not on the liquidus — solid-state transition only';
+  } else {
+    el['i-polyb'].textContent = '— (режим выключен / mode off)';
+    el['i-perb'].textContent = '—';
+  }
+  if (state.showDTA && model.dta) {
+    el['dta-title'].textContent = '— x = ' + model.dta.xPct.toFixed(1) + '% B';
+    el['i-dta'].textContent = model.dta.peaks.length
+      ? model.dta.peaks.map(pk => pk.T_C.toFixed(0) + ' °C: ' + pk.label).join(' • ')
+      : 'пиков нет / no peaks';
+  } else {
+    el['dta-title'].textContent = '';
+    el['i-dta'].textContent = '— (кривая скрыта / curve hidden)';
+  }
 }
 
 /* Синхронизация подписи формулы соединения / Sync the compound formula label */
@@ -1195,6 +1789,7 @@ function recomputeAll() {
   showWarnings(inputWarnings.concat(modelWarnings));
   if (diagP) diagP.redraw();
   if (microP) microP.redraw();
+  if (dtaP) dtaP.redraw();          // v4.1: панель ДТА перерисовывается при любом изменении (ТЗ 3.5) / DTA panel redraws on any change (spec 3.5)
 }
 
 /* Обработчик любого изменения ввода / Handler for any input change */
@@ -1238,6 +1833,12 @@ function updateViewRange() {
    * Margin below the solidus so the gray zone and its label stay visible */
   const below = clamp(0.15 * (tTop - solidusT), 40, 150);
   let tBottom = Math.min(solidusT - below, state.T_C - TOP_MARGIN_C);
+  /* v4.1: линии полиморфных переходов ниже солидуса должны попадать в шкалу /
+   * v4.1: polymorphic transition lines below the solidus must fit the scale */
+  let polyMin = Infinity;
+  if (model.polyA) polyMin = Math.min(polyMin, model.polyA.Tpoly_C);
+  if (model.polyB) polyMin = Math.min(polyMin, model.polyB.Tpoly_C);
+  if (polyMin < Infinity) tBottom = Math.min(tBottom, polyMin - 25);
   tBottom = Math.max(tBottom, -300);              // не глубже -300 °C / not deeper than -300 °C
   if (tTop - tBottom < 20) tTop = tBottom + 20;   // защита от вырождения / degenerate guard
   view.tTop = tTop;
@@ -1303,12 +1904,147 @@ function branchBPoints(n) {
   return pts;
 }
 
+/* ============================================================================
+ * v4.2: ПЕРЕТАСКИВАЕМЫЕ ПОДПИСИ (пожелание: подписи перекрываются)
+ * v4.2: DRAGGABLE LABELS (user request: overlapping labels)
+ *
+ * Каждая подпись диаграммы и ДТА рисуется функцией drawLabel со стабильным id;
+ * её смещение хранится в state.labelOffsets. Подпись перетаскивается мышью;
+ * при смещении рисуется пунктирная линия-указатель к точке привязки.
+ * Двойной клик по подписи возвращает её на место, кнопка «⟲ Подписи» сбрасывает
+ * все смещения, смещения сохраняются в share-ссылку (параметр lo).
+ * Every diagram/DTA label is drawn by drawLabel with a stable id; its offset
+ * is stored in state.labelOffsets. A label is dragged with the mouse; when
+ * displaced a dashed leader line points to its anchor. Double click restores
+ * a label, the "Labels" button resets all offsets, and offsets are stored in
+ * the share link (the lo parameter).
+ * ========================================================================== */
+const LBL_BOXES = { diag: [], dta: [] };   // хит-боксы подписей текущего кадра / label hit boxes of the current frame
+const LBL_DRAG = { active: false, key: null, id: null, ox: 0, oy: 0, sx: 0, sy: 0, moved: false };
+
+function labelOffsetOf(id) {
+  const o = state.labelOffsets[id];
+  return o ? o : { dx: 0, dy: 0 };
+}
+
+/* Подпись с регистрацией хит-бокса. opts: size, align (left/center/right),
+ * valign (top/center/bottom), dx/dy — положение по умолчанию относительно
+ * точки привязки, halo — белая подложка, alpha — прозрачность.
+ * A label registering its hit box. opts: size, align, valign, dx/dy — default
+ * displacement from the anchor, halo — white outline, alpha — opacity. */
+function drawLabel(p, key, id, x, y, txt, opts) {
+  opts = opts || {};
+  const size = opts.size || 11;
+  const off = labelOffsetOf(id);
+  const px = x + (opts.dx || 0) + off.dx;
+  const py = y + (opts.dy || 0) + off.dy;
+  p.textSize(size);
+  const al = opts.align || 'center', va = opts.valign || 'center';
+  p.textAlign(al === 'left' ? p.LEFT : al === 'right' ? p.RIGHT : p.CENTER,
+              va === 'top' ? p.TOP : va === 'bottom' ? p.BOTTOM : p.CENTER);
+  const w = p.textWidth(txt);
+  const bx0 = (al === 'left' ? px : al === 'right' ? px - w : px - w / 2) - 3;
+  const bx1 = bx0 + w + 6;
+  const by0 = (va === 'top' ? py : va === 'bottom' ? py - size : py - size / 2) - 3;
+  const by1 = by0 + size + 6;
+  if (opts.halo) { p.stroke(255, 255, 255, opts.alpha === undefined ? 255 : opts.alpha); p.strokeWeight(3); }
+  p.text(txt, px, py);
+  if (opts.halo) { p.noStroke(); p.text(txt, px, py); }
+  /* Линия-указатель: от точки привязки к смещённой подписи /
+   * Leader line: from the anchor to the displaced label */
+  if (Math.abs(off.dx) + Math.abs(off.dy) > 6 || (LBL_DRAG.active && LBL_DRAG.id === id)) {
+    const cx = clamp(x, bx0, bx1), cy = clamp(y, by0, by1);
+    if (Math.abs(x - cx) + Math.abs(y - cy) > 2) {
+      p.stroke(115, 115, 130, 220); p.strokeWeight(1);
+      p.drawingContext.setLineDash([4, 3]);
+      p.line(x, y, cx, cy);
+      p.drawingContext.setLineDash([]);
+      p.noStroke(); p.fill(115, 115, 130, 235);
+      p.circle(x, y, 4);
+    }
+  }
+  p.noStroke(); p.strokeWeight(1);
+  LBL_BOXES[key].push({ id: id, bx0: bx0, by0: by0, bx1: bx1, by1: by1 });
+}
+
+/* Поиск подписи под курсором / Hit test for the label under the cursor */
+function labelHitAt(key, mx, my) {
+  const arr = LBL_BOXES[key];
+  for (let i = arr.length - 1; i >= 0; i--) {
+    const b = arr[i];
+    if (mx >= b.bx0 && mx <= b.bx1 && my >= b.by0 && my <= b.by1) return b;
+  }
+  return null;
+}
+
+function startLabelDrag(key, box, mx, my) {
+  LBL_DRAG.active = true; LBL_DRAG.key = key; LBL_DRAG.id = box.id;
+  const off = labelOffsetOf(box.id);
+  LBL_DRAG.ox = off.dx; LBL_DRAG.oy = off.dy;
+  LBL_DRAG.sx = mx; LBL_DRAG.sy = my; LBL_DRAG.moved = false;
+}
+
+function moveLabelDrag(mx, my) {
+  if (!LBL_DRAG.active) return;
+  const dx = Math.round(LBL_DRAG.ox + mx - LBL_DRAG.sx);
+  const dy = Math.round(LBL_DRAG.oy + my - LBL_DRAG.sy);
+  if (Math.abs(dx - LBL_DRAG.ox) + Math.abs(dy - LBL_DRAG.oy) > 2) LBL_DRAG.moved = true;
+  state.labelOffsets[LBL_DRAG.id] = { dx: dx, dy: dy };
+  if (LBL_DRAG.key === 'diag' && diagP) diagP.redraw();
+  if (LBL_DRAG.key === 'dta' && dtaP) dtaP.redraw();
+}
+
+function endLabelDrag() {
+  if (!LBL_DRAG.active) return;
+  const moved = LBL_DRAG.moved;
+  LBL_DRAG.active = false; LBL_DRAG.key = null; LBL_DRAG.id = null;
+  if (moved) updateResetLabelsBtn();
+}
+
+/* Двойной клик по подписи — вернуть на место / Double click — restore one label */
+function labelDblClick(ev, p, key) {
+  const r = p.canvas.getBoundingClientRect();
+  const hit = labelHitAt(key, ev.clientX - r.left, ev.clientY - r.top);
+  if (!hit) return;
+  delete state.labelOffsets[hit.id];
+  updateResetLabelsBtn();
+  if (key === 'diag' && diagP) diagP.redraw();
+  if (key === 'dta' && dtaP) dtaP.redraw();
+}
+
+/* Курсор-«рука» над подписью / Hand cursor over a label */
+function updateLabelCursor(p, key) {
+  if (!p || !p.canvas) return;
+  const inside = p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height;
+  let cur = 'default';
+  if (inside) {
+    if (LBL_DRAG.active && LBL_DRAG.key === key) cur = 'grabbing';
+    else if (labelHitAt(key, p.mouseX, p.mouseY)) cur = 'grab';
+  }
+  if (p.canvas.style.cursor !== cur) p.canvas.style.cursor = cur;
+}
+
+function updateResetLabelsBtn() {
+  const b = el['btn-reset-labels'];
+  if (b) b.hidden = Object.keys(state.labelOffsets).length === 0;
+}
+
+function resetAllLabels() {
+  if (!Object.keys(state.labelOffsets).length) return;
+  state.labelOffsets = {};
+  updateResetLabelsBtn();
+  if (diagP) diagP.redraw();
+  if (dtaP) dtaP.redraw();
+  showToast('Положение подписей сброшено / Label positions reset');
+}
+
 /*
  * Отрисовка фазовой диаграммы.
  * Draw phase diagram.
  */
 function drawPhaseDiagram(p) {
   if (!model) return;
+  LBL_BOXES.diag.length = 0;               // реестр подписей текущего кадра / this frame's label registry
   p.background(251);
   p.textFont('Arial');
 
@@ -1316,6 +2052,24 @@ function drawPhaseDiagram(p) {
   p.noStroke(); p.fill(30); p.textSize(15); p.textStyle(p.BOLD); p.textAlign(p.LEFT, p.TOP);
   p.text('Фазовая диаграмма ' + state.nameA + '–' + state.nameB + ' / Phase diagram', PX.x0 - 30, 14);
   p.textStyle(p.NORMAL);
+
+  /* v4.1: активен полиморфизм — отдельный путь рендера (морфинг пропускается) /
+   * v4.1: polymorphism active — dedicated render path (morphing skipped) */
+  if (state.showPolyA || state.showPolyB) {
+    drawZonesPoly(p);
+    drawGridAxes(p);
+    drawLiquidusPoly(p);
+    drawPolymorphicTransitionA(p);
+    drawPolymorphicTransitionB(p);
+    drawPeritecticLineA(p);
+    drawPeritecticLineB(p);
+    drawZoneLabelsPoly(p);
+    if (state.showCompound && model.compound && !model.compound.unstable) drawCompoundMarks(p, 1);
+    else drawEutecticMark(p);
+    drawDTAConnectors(p);
+    drawPhasePoint(p);
+    return;
+  }
 
   /* v3.0: режим соединения — морфинг кривых, иначе обычная отрисовка v2.1 /
    * v3.0: compound mode — curve morphing, otherwise the plain v2.1 rendering */
@@ -1475,7 +2229,7 @@ function drawZoneLabels(p, alpha) {
    * Midway between the liquidus peak and the top of the dynamic scale */
   const tLiquid = (Math.max(state.TmA_C, state.TmB_C) + view.tTop) / 2;
   p.fill(150, 60, 90, a);
-  p.text('Liquid / Жидкость', xToPx(50), tToPx(tLiquid));
+  drawLabel(p, 'diag', 'z.Liquid', xToPx(50), tToPx(tLiquid), 'Liquid / Жидкость', { size: 12, alpha: a });
 
   /* L + A / L + B — нижние части двухфазных линз (у солидуса), чтобы не
    * пересекаться с интерактивной точкой /
@@ -1484,16 +2238,16 @@ function drawZoneLabels(p, alpha) {
   const xMidL = e.xPct / 2;
   const tMidL = e.T_C + 0.25 * (k2c(liquidusTempA(xMidL / 100)) - e.T_C);
   p.fill(COL.A_DARK[0], COL.A_DARK[1], COL.A_DARK[2], a);
-  p.text('L + A(тв)', xToPx(xMidL), tToPx(tMidL));
+  drawLabel(p, 'diag', 'z.LA', xToPx(xMidL), tToPx(tMidL), 'L + A(тв)', { size: 12, alpha: a });
 
   const xMidR = e.xPct + (100 - e.xPct) / 2;
   const tMidR = e.T_C + 0.25 * (k2c(liquidusTempB(xMidR / 100)) - e.T_C);
   p.fill(COL.B_DARK[0], COL.B_DARK[1], COL.B_DARK[2], a);
-  p.text('L + B(тв)', xToPx(xMidR), tToPx(tMidR));
+  drawLabel(p, 'diag', 'z.LB', xToPx(xMidR), tToPx(tMidR), 'L + B(тв)', { size: 12, alpha: a });
 
   /* A + B (твёрдое) / solid */
   p.fill(90, 90, 90, a);
-  p.text('A(тв) + B(тв)', xToPx(50), Math.min(tToPx(e.T_C) + 20, PX.y1 - 12));
+  drawLabel(p, 'diag', 'z.Solid', xToPx(50), Math.min(tToPx(e.T_C) + 20, PX.y1 - 12), 'A(тв) + B(тв)', { size: 12, alpha: a });
   p.textStyle(p.NORMAL);
 }
 
@@ -1512,15 +2266,790 @@ function drawEutecticMark(p, alpha) {
    * does not overlap the labels of the narrow two-phase lenses */
   p.noStroke(); p.fill(20, 20, 20, a); p.textSize(11); p.textStyle(p.BOLD);
   const rightSide = px > PX.x0 + 0.5 * (PX.x1 - PX.x0);
-  p.textAlign(rightSide ? p.RIGHT : p.LEFT, p.BOTTOM);
   /* Белая подложка для читаемости поверх линий / white halo for readability over lines */
   const eutText = 'Эвтектика / Eutectic: ' + e.xPct.toFixed(1) + '%, ' + e.T_C.toFixed(0) + '°C';
-  p.stroke(255, 255, 255, a); p.strokeWeight(3);
-  p.text(eutText, px + (rightSide ? -10 : 10), py - 14);
-  p.noStroke();
-  p.text(eutText, px + (rightSide ? -10 : 10), py - 14);
+  drawLabel(p, 'diag', 'eut', px, py, eutText,
+    { size: 11, align: rightSide ? 'right' : 'left', valign: 'bottom',
+      dx: rightSide ? -10 : 10, dy: -14, halo: true, alpha: a });
   p.strokeWeight(1);
   p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
+}
+
+/* ============================================================================
+ * v4.1: ОТРИСОВКА ПОЛИМОРФИЗМА И ПЕРИТЕКТИК (отдельный путь рендера)
+ * v4.1: RENDERING OF POLYMORPHISM AND PERITECTICS (dedicated render path)
+ *
+ * Путь включается, когда активен хотя бы один полиморфизм, и поддерживает
+ * как простой режим, так и режим соединения. Морфинг v3.0 при этом
+ * пропускается (рисуется сразу итоговая диаграмма).
+ * The path is activated when at least one polymorphism is on and supports
+ * both the simple mode and the compound mode. The v3.0 morphing is skipped
+ * (the final diagram is drawn at once).
+ * ========================================================================== */
+const POLY_N = 48;                // точек на ветвь / points per branch
+
+/* Точки α-ветви A: от чистого A до перитектики (или до эвтектики, если
+ * перитектика не видима) / α-branch points of A: from pure A to the
+ * peritectic point (or to the eutectic when the peritectic is not visible) */
+function branchAlphaAPoints(n) {
+  const e = compoundDrawn() ? model.compound.e1 : model.eutectic;
+  const P = model.polyA;
+  const xEnd = (P && P.visible) ? P.xPerPct : e.xPct;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const x = xEnd * i / n;
+    pts.push([xToPx(x), tToPx(k2c(liquidusTempAlphaA(x / 100)))]);
+  }
+  return pts;
+}
+
+/* Точки β-ветви A: от перитектики до эвтектики (только при видимой перитектике) /
+ * β-branch points of A: from the peritectic to the eutectic (visible peritectic only) */
+function branchBetaAPoints(n) {
+  const P = model.polyA;
+  if (!P || !P.visible) return [];
+  const e = compoundDrawn() ? model.compound.e1 : model.eutectic;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const x = P.xPerPct + (e.xPct - P.xPerPct) * i / n;
+    pts.push([xToPx(x), tToPx(k2c(liquidusTempBetaA_cur(x / 100)))]);
+  }
+  return pts;
+}
+
+/* Точки α-ветви B: от перитектики (или эвтектики) до чистого B /
+ * α-branch points of B: from the peritectic (or eutectic) to pure B */
+function branchAlphaBPoints(n) {
+  const e = compoundDrawn() ? model.compound.e2 : model.eutectic;
+  const Q = model.polyB;
+  const xStart = (Q && Q.visible) ? Q.xPerPct : e.xPct;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const x = xStart + (100 - xStart) * i / n;
+    pts.push([xToPx(x), tToPx(k2c(liquidusTempAlphaB(x / 100)))]);
+  }
+  return pts;
+}
+
+/* Точки β-ветви B: от эвтектики до перитектики / β-branch points of B: from the eutectic to the peritectic */
+function branchBetaBPoints(n) {
+  const Q = model.polyB;
+  if (!Q || !Q.visible) return [];
+  const e = compoundDrawn() ? model.compound.e2 : model.eutectic;
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const x = e.xPct + (Q.xPerPct - e.xPct) * i / n;
+    pts.push([xToPx(x), tToPx(k2c(liquidusTempBetaB_cur(x / 100)))]);
+  }
+  return pts;
+}
+
+/*
+ * Составной ликвидус [x%, °C] слева направо: α_A → перитектика → β_A → E1 →
+ * (ветви соединения) → E2 → β_B → перитектика → α_B.
+ * Composite liquidus [x%, °C] left to right: α_A → peritectic → β_A → E1 →
+ * (compound branches) → E2 → β_B → peritectic → α_B.
+ */
+function compositeLiquidusPts(n) {
+  const useSub = compoundDrawn();
+  const eL = useSub ? model.compound.e1 : model.eutectic;
+  const eR = useSub ? model.compound.e2 : model.eutectic;
+  const P = model.polyA, Q = model.polyB;
+  const pts = [];
+  const xAEnd = (P && P.visible) ? P.xPerPct : eL.xPct;
+  for (let i = 0; i <= n; i++) {
+    const x = xAEnd * i / n;
+    pts.push([x, k2c(liquidusTempAlphaA(x / 100))]);
+  }
+  if (P && P.visible) {
+    for (let i = 1; i <= n; i++) {
+      const x = P.xPerPct + (eL.xPct - P.xPerPct) * i / n;
+      pts.push([x, k2c(liquidusTempBetaA_cur(x / 100))]);
+    }
+  }
+  if (useSub) {
+    for (let i = 1; i <= n; i++) {
+      const x = eL.xPct + (model.compound.xABpct - eL.xPct) * i / n;
+      pts.push([x, k2c(liquidusTempAB_left(x / 100))]);
+    }
+    for (let i = 1; i <= n; i++) {
+      const x = model.compound.xABpct + (eR.xPct - model.compound.xABpct) * i / n;
+      pts.push([x, k2c(liquidusTempAB_right(x / 100))]);
+    }
+  }
+  if (Q && Q.visible) {
+    for (let i = 1; i <= n; i++) {
+      const x = eR.xPct + (Q.xPerPct - eR.xPct) * i / n;
+      pts.push([x, k2c(liquidusTempBetaB_cur(x / 100))]);
+    }
+  }
+  const xBStart = (Q && Q.visible) ? Q.xPerPct : eR.xPct;
+  for (let i = 1; i <= n; i++) {
+    const x = xBStart + (100 - xBStart) * i / n;
+    pts.push([x, k2c(liquidusTempAlphaB(x / 100))]);
+  }
+  return pts;
+}
+
+/* Температура составного ликвидуса при составе x% (линейная интерполяция выборок) /
+ * Composite liquidus temperature at composition x% (linear interpolation of samples) */
+function compLiquidusAt(pts, xPct) {
+  if (xPct <= pts[0][0]) return pts[0][1];
+  for (let i = 1; i < pts.length; i++) {
+    if (xPct <= pts[i][0]) {
+      const t = (xPct - pts[i - 1][0]) / Math.max(pts[i][0] - pts[i - 1][0], 1e-9);
+      return pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * t;
+    }
+  }
+  return pts[pts.length - 1][1];
+}
+
+/* Закрашивание зон фаз с полиморфизмом / Phase zone filling with polymorphism */
+function drawZonesPoly(p) {
+  const useSub = compoundDrawn();
+  const eL = useSub ? model.compound.e1 : model.eutectic;
+  const eR = useSub ? model.compound.e2 : model.eutectic;
+  const P = model.polyA, Q = model.polyB;
+  const xAB = useSub ? model.compound.xABpct : null;
+  p.noStroke();
+
+  /* --- Твёрдая зона ниже солидуса / Solid zone below the solidus --- */
+  const ySolid = Math.min(tToPx(eL.T_C), tToPx(eR.T_C));
+  p.fill(COL.ZONE_SOLID);
+  p.rect(PX.x0, ySolid, PX.x1 - PX.x0, PX.y1 - ySolid + 1);
+  /* β-часть (темнее) ниже T_poly, когда переход не на ликвидусе /
+   * β part (darker) below T_poly when the transition is off the liquidus */
+  if (P && !P.visible) {
+    const xEnd = useSub ? xAB : eL.xPct;
+    p.fill(178, 181, 189, 200);
+    p.rect(PX.x0, tToPx(P.Tpoly_C), xToPx(xEnd) - PX.x0, PX.y1 - tToPx(P.Tpoly_C) + 1);
+  }
+  if (Q && !Q.visible) {
+    const xStart = useSub ? xAB : eR.xPct;
+    p.fill(178, 181, 189, 200);
+    p.rect(xToPx(xStart), tToPx(Q.Tpoly_C), PX.x1 - xToPx(xStart), PX.y1 - tToPx(Q.Tpoly_C) + 1);
+  }
+
+  /* --- Зона L+α стороны A (между α-ветвью и T_poly либо солидусом) /
+   * --- L+α zone of the A side (between the α branch and T_poly or the solidus) --- */
+  p.fill(COL.ZONE_LA[0], COL.ZONE_LA[1], COL.ZONE_LA[2], COL.ZONE_LA[3]);
+  p.beginShape();
+  p.vertex(xToPx(0), tToPx(state.TmA_C));
+  branchAlphaAPoints(40).forEach(v => p.vertex(v[0], v[1]));
+  if (P && P.visible) p.vertex(xToPx(0), tToPx(P.Tpoly_C));
+  else p.vertex(xToPx(0), tToPx(eL.T_C));
+  p.endShape(p.CLOSE);
+
+  /* --- Зона L+β стороны A (между T_poly и β-ветвью) /
+   * --- L+β zone of the A side (between T_poly and the β branch) --- */
+  if (P && P.visible) {
+    p.fill(COL.ZONE_LA[0], COL.ZONE_LA[1], COL.ZONE_LA[2], 28);
+    p.beginShape();
+    p.vertex(xToPx(0), tToPx(P.Tpoly_C));
+    branchBetaAPoints(40).forEach(v => p.vertex(v[0], v[1]));
+    p.vertex(xToPx(0), tToPx(eL.T_C));
+    p.endShape(p.CLOSE);
+  }
+
+  /* --- Зоны L+AB (режим соединения) / L+AB zones (compound mode) --- */
+  if (useSub) {
+    p.fill(COL.ZONE_LAB[0], COL.ZONE_LAB[1], COL.ZONE_LAB[2], COL.ZONE_LAB[3]);
+    p.beginShape();
+    p.vertex(xToPx(eL.xPct), tToPx(eL.T_C));
+    for (let i = 0; i <= 24; i++) {
+      const x = eL.xPct + (xAB - eL.xPct) * i / 24;
+      p.vertex(xToPx(x), tToPx(k2c(liquidusTempAB_left(x / 100))));
+    }
+    p.vertex(xToPx(xAB), tToPx(eL.T_C));
+    p.endShape(p.CLOSE);
+    p.beginShape();
+    p.vertex(xToPx(xAB), tToPx(eR.T_C));
+    for (let i = 0; i <= 24; i++) {
+      const x = xAB + (eR.xPct - xAB) * i / 24;
+      p.vertex(xToPx(x), tToPx(k2c(liquidusTempAB_right(x / 100))));
+    }
+    p.vertex(xToPx(eR.xPct), tToPx(eR.T_C));
+    p.endShape(p.CLOSE);
+  }
+
+  /* --- Зоны стороны B / Zones of the B side --- */
+  p.fill(COL.ZONE_LB[0], COL.ZONE_LB[1], COL.ZONE_LB[2], COL.ZONE_LB[3]);
+  p.beginShape();
+  p.vertex(xToPx(100), tToPx(state.TmB_C));
+  branchAlphaBPoints(40).forEach(v => p.vertex(v[0], v[1]));
+  if (Q && Q.visible) p.vertex(xToPx(100), tToPx(Q.Tpoly_C));
+  else p.vertex(xToPx(100), tToPx(eR.T_C));
+  p.endShape(p.CLOSE);
+  if (Q && Q.visible) {
+    p.fill(COL.ZONE_LB[0], COL.ZONE_LB[1], COL.ZONE_LB[2], 26);
+    p.beginShape();
+    p.vertex(xToPx(100), tToPx(Q.Tpoly_C));
+    branchBetaBPoints(40).forEach(v => p.vertex(v[0], v[1]));
+    p.vertex(xToPx(100), tToPx(eR.T_C));
+    p.endShape(p.CLOSE);
+  }
+
+  /* --- Жидкость над составным ликвидусом / Liquid above the composite liquidus --- */
+  const pts = compositeLiquidusPts(40);
+  p.fill(COL.LIQUID[0], COL.LIQUID[1], COL.LIQUID[2], COL.LIQUID_ALPHA);
+  p.beginShape();
+  p.vertex(xToPx(0), PX.y0);
+  p.vertex(xToPx(100), PX.y0);
+  for (let i = pts.length - 1; i >= 0; i--) p.vertex(xToPx(pts[i][0]), tToPx(pts[i][1]));
+  p.endShape(p.CLOSE);
+}
+
+/* Линии ликвидуса и солидуса с полиморфизмом / Liquidus and solidus lines with polymorphism */
+function drawLiquidusPoly(p) {
+  const useSub = compoundDrawn();
+  const eL = useSub ? model.compound.e1 : model.eutectic;
+  const eR = useSub ? model.compound.e2 : model.eutectic;
+  p.noFill(); p.strokeWeight(3);
+  p.stroke(COL.A_DARK[0], COL.A_DARK[1], COL.A_DARK[2]);
+  p.beginShape(); branchAlphaAPoints(60).forEach(v => p.vertex(v[0], v[1])); p.endShape();
+  if (model.polyA && model.polyA.visible) {
+    p.beginShape(); branchBetaAPoints(60).forEach(v => p.vertex(v[0], v[1])); p.endShape();
+  }
+  p.stroke(COL.B_DARK[0], COL.B_DARK[1], COL.B_DARK[2]);
+  p.beginShape(); branchAlphaBPoints(60).forEach(v => p.vertex(v[0], v[1])); p.endShape();
+  if (model.polyB && model.polyB.visible) {
+    p.beginShape(); branchBetaBPoints(60).forEach(v => p.vertex(v[0], v[1])); p.endShape();
+  }
+  /* v4.2 (исправление): ветви ликвидуса соединения (E1→пик→E2, тёмно-жёлтые) и
+   * вертикальная линия стехиометрии — в полиморфном пути они отсутствовали,
+   * хотя жёлтая зона L+A_mB_n оставалась закрашенной /
+   * v4.2 (bugfix): the compound liquidus branches (E1→peak→E2, dark yellow) and
+   * the stoichiometry vertical line were missing in the polymorphic path while
+   * the yellow L+A_mB_n zone stayed filled */
+  if (useSub) {
+    const c = model.compound;
+    p.stroke(COL.AB_LINE[0], COL.AB_LINE[1], COL.AB_LINE[2]);
+    p.beginShape();
+    for (let i = 0; i <= 60; i++) {
+      const x = eL.xPct + (c.xABpct - eL.xPct) * i / 60;
+      p.vertex(xToPx(x), tToPx(k2c(liquidusTempAB_left(x / 100))));
+    }
+    p.endShape();
+    p.beginShape();
+    for (let i = 0; i <= 60; i++) {
+      const x = c.xABpct + (eR.xPct - c.xABpct) * i / 60;
+      p.vertex(xToPx(x), tToPx(k2c(liquidusTempAB_right(x / 100))));
+    }
+    p.endShape();
+    const peakT = k2c(liquidusTempAB_left(c.xABfrac));
+    p.strokeWeight(2.5);
+    p.line(xToPx(c.xABpct), tToPx(peakT), xToPx(c.xABpct), tToPx(view.tBottom));
+    p.strokeWeight(1);
+  }
+  /* Солидусы — эвтектические горизонтали / Solidus — eutectic horizontals */
+  p.stroke(60); p.strokeWeight(2);
+  if (useSub) {
+    p.line(xToPx(0), tToPx(eL.T_C), xToPx(model.compound.xABpct), tToPx(eL.T_C));
+    p.line(xToPx(model.compound.xABpct), tToPx(eR.T_C), xToPx(100), tToPx(eR.T_C));
+  } else {
+    p.line(xToPx(0), tToPx(eL.T_C), xToPx(100), tToPx(eL.T_C));
+  }
+  p.strokeWeight(1);
+}
+
+/*
+ * drawPolymorphicTransitionA (ТЗ 6.1): горизонтальная линия перехода α↔β A.
+ * При видимой перитектике совпадает с перитектической горизонталью (тёмная,
+ * от 0% до x_per); иначе — пунктир в твёрдой зоне до края α-области.
+ * drawPolymorphicTransitionA (spec 6.1): the α↔β transition horizontal of A.
+ * With a visible peritectic it coincides with the peritectic horizontal (dark,
+ * from 0% to x_per); otherwise a dashed line inside the solid zone.
+ */
+function drawPolymorphicTransitionA(p) {
+  const P = model.polyA;
+  if (!P) return;
+  const y = tToPx(P.Tpoly_C);
+  const name = truncName(state.nameA, 15);
+  if (P.visible) {
+    p.stroke(COL.PER_LINE[0], COL.PER_LINE[1], COL.PER_LINE[2]); p.strokeWeight(2.5);
+    p.line(xToPx(0), y, xToPx(P.xPerPct), y);
+  } else {
+    const xEnd = compoundDrawn() ? model.compound.xABpct : model.eutectic.xPct;
+    p.stroke(COL.POLY_SOLID[0], COL.POLY_SOLID[1], COL.POLY_SOLID[2], 240);
+    p.strokeWeight(1.5);
+    p.drawingContext.setLineDash([6, 5]);
+    p.line(xToPx(0), y, xToPx(xEnd), y);
+    p.drawingContext.setLineDash([]);
+  }
+  /* Подпись перехода (ТЗ 4.2) / transition label (spec 4.2) */
+  p.noStroke();
+  p.fill(COL.PER_LINE[0], COL.PER_LINE[1], COL.PER_LINE[2]);
+  p.textStyle(p.BOLD);
+  drawLabel(p, 'diag', 'poly.trA', xToPx(0) + 4, y - 3, 'α-' + name + ' ↔ β-' + name,
+    { size: 10.5, align: 'left', valign: 'bottom' });
+  p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
+  p.strokeWeight(1);
+}
+
+/* drawPolymorphicTransitionB (ТЗ 6.1): зеркально для B / mirrored for B */
+function drawPolymorphicTransitionB(p) {
+  const Q = model.polyB;
+  if (!Q) return;
+  const y = tToPx(Q.Tpoly_C);
+  const name = truncName(state.nameB, 15);
+  if (Q.visible) {
+    p.stroke(COL.PER_LINE[0], COL.PER_LINE[1], COL.PER_LINE[2]); p.strokeWeight(2.5);
+    p.line(xToPx(Q.xPerPct), y, xToPx(100), y);
+  } else {
+    const xStart = compoundDrawn() ? model.compound.xABpct : model.eutectic.xPct;
+    p.stroke(COL.POLY_SOLID[0], COL.POLY_SOLID[1], COL.POLY_SOLID[2], 240);
+    p.strokeWeight(1.5);
+    p.drawingContext.setLineDash([6, 5]);
+    p.line(xToPx(xStart), y, xToPx(100), y);
+    p.drawingContext.setLineDash([]);
+  }
+  p.noStroke();
+  p.fill(COL.PER_LINE[0], COL.PER_LINE[1], COL.PER_LINE[2]);
+  p.textStyle(p.BOLD);
+  drawLabel(p, 'diag', 'poly.trB', xToPx(100) - 4, y - 3, 'α-' + name + ' ↔ β-' + name,
+    { size: 10.5, align: 'right', valign: 'bottom' });
+  p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
+  p.strokeWeight(1);
+}
+
+/*
+ * drawPeritecticLineA (ТЗ 6.1): перитектическая точка и подпись
+ * "Перитектика: L + α-Имя ↔ β-Имя" (ТЗ 4.2).
+ * drawPeritecticLineA (spec 6.1): the peritectic point and the label
+ * "Peritectic: L + α-Name ↔ β-Name" (spec 4.2).
+ */
+function drawPeritecticLineA(p) {
+  const P = model.polyA;
+  if (!P || !P.visible) return;
+  const px = xToPx(P.xPerPct), py = tToPx(P.Tper_C);
+  p.stroke(30); p.strokeWeight(1.5); p.fill(255);
+  p.rect(px - 5, py - 5, 10, 10);                       // маркер-квадрат / square marker
+  const name = truncName(state.nameA, 15);
+  const txt = 'Перитектика / Peritectic: L + α-' + name + ' ↔ β-' + name +
+    '  (' + P.xPerPct.toFixed(1) + '%, ' + P.Tper_C.toFixed(0) + '°C)';
+  const putLeft = px > PX.x0 + 0.62 * (PX.x1 - PX.x0);
+  p.noStroke(); p.fill(30); p.textStyle(p.BOLD);
+  drawLabel(p, 'diag', 'per.A', px, py, txt,
+    { size: 11, align: putLeft ? 'right' : 'left', valign: 'top',
+      dx: putLeft ? -9 : 9, dy: 10, halo: true });
+  p.strokeWeight(1); p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
+}
+
+/* drawPeritecticLineB (ТЗ 6.1): зеркально для B / mirrored for B */
+function drawPeritecticLineB(p) {
+  const Q = model.polyB;
+  if (!Q || !Q.visible) return;
+  const px = xToPx(Q.xPerPct), py = tToPx(Q.Tper_C);
+  p.stroke(30); p.strokeWeight(1.5); p.fill(255);
+  p.rect(px - 5, py - 5, 10, 10);
+  const name = truncName(state.nameB, 15);
+  const txt = 'Перитектика / Peritectic: L + α-' + name + ' ↔ β-' + name +
+    '  (' + Q.xPerPct.toFixed(1) + '%, ' + Q.Tper_C.toFixed(0) + '°C)';
+  const putLeft = px < PX.x1 - 0.62 * (PX.x1 - PX.x0);
+  p.noStroke(); p.fill(30); p.textStyle(p.BOLD);
+  drawLabel(p, 'diag', 'per.B', px, py, txt,
+    { size: 11, align: putLeft ? 'left' : 'right', valign: 'top',
+      dx: putLeft ? 9 : -9, dy: 10, halo: true });
+  p.strokeWeight(1); p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
+}
+
+/* Подписи зон с полиморфизмом и именами фаз / Zone labels with polymorphism and phase names */
+function drawZoneLabelsPoly(p) {
+  const useSub = compoundDrawn();
+  const eL = useSub ? model.compound.e1 : model.eutectic;
+  const eR = useSub ? model.compound.e2 : model.eutectic;
+  const P = model.polyA, Q = model.polyB;
+  const xAB = useSub ? model.compound.xABpct : null;   // граница подсистем / subsystem boundary
+  const pts = compositeLiquidusPts(POLY_N);
+  const M = x => compLiquidusAt(pts, x);
+  const F = useSub ? model.compound.formula : null;
+  p.noStroke(); p.textSize(12); p.textStyle(p.BOLD); p.textAlign(p.CENTER, p.CENTER);
+
+  /* Liquid */
+  const liquidX = useSub && Math.abs(50 - model.compound.xABpct) <= 12 ? (model.compound.xABpct < 50 ? 78 : 22) : 50;
+  p.fill(150, 60, 90);
+  drawLabel(p, 'diag', 'zp.Liquid', xToPx(liquidX), tToPx((M(liquidX) + view.tTop) / 2), 'Liquid / Жидкость', { size: 12 });
+
+  /* Подпись двухфазной линзы / two-phase lens label helper */
+  const lensLabel = (id, xFrom, xTo, TE, full, short, col) => {
+    const wPx = (xTo - xFrom) / 100 * (PX.x1 - PX.x0);
+    if (wPx < 34) return;
+    const xMid = (xFrom + xTo) / 2;
+    const tMid = TE + 0.25 * (M(xMid) - TE);
+    p.fill(col[0], col[1], col[2]);
+    drawLabel(p, 'diag', id, xToPx(xMid), tToPx(tMid), wPx >= 92 ? full : short, { size: 12 });
+  };
+
+  /* Сторона A / A side */
+  if (P && P.visible) {
+    lensLabel('zp.LA.a', 0, P.xPerPct, P.Tpoly_C, 'L + ' + getPhaseName('alphaA'), 'L+α', COL.A_DARK);
+    lensLabel('zp.LA.b', P.xPerPct, eL.xPct, eL.T_C, 'L + ' + getPhaseName('betaA'), 'L+β', COL.A_DARK);
+  } else {
+    lensLabel('zp.LA', 0, eL.xPct, eL.T_C, 'L + ' + getPhaseName('alphaA'), 'L+A', COL.A_DARK);
+  }
+  /* Линзы соединения / compound lenses */
+  if (useSub) {
+    lensLabel('zp.LAB.l', eL.xPct, model.compound.xABpct, eL.T_C, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
+    lensLabel('zp.LAB.r', model.compound.xABpct, eR.xPct, eR.T_C, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
+  }
+  /* Сторона B / B side */
+  if (Q && Q.visible) {
+    lensLabel('zp.LB.b', eR.xPct, Q.xPerPct, eR.T_C, 'L + ' + getPhaseName('betaB'), 'L+β', COL.B_DARK);
+    lensLabel('zp.LB.a', Q.xPerPct, 100, Q.Tpoly_C, 'L + ' + getPhaseName('alphaB'), 'L+α', COL.B_DARK);
+  } else {
+    lensLabel('zp.LB', eR.xPct, 100, eR.T_C, 'L + ' + getPhaseName('alphaB'), 'L+B', COL.B_DARK);
+  }
+
+  /* Твёрдые зоны (ТЗ 2.5): β-имена ниже переходов / Solid zones (spec 2.5): β names below the transitions */
+  const solidLabel = (id, xFrom, xTo, yT, txt) => {
+    const wPx = (xTo - xFrom) / 100 * (PX.x1 - PX.x0);
+    if (wPx < 56) return;
+    p.fill(90, 90, 90);
+    drawLabel(p, 'diag', id, xToPx((xFrom + xTo) / 2), yT, txt, { size: 12 });
+  };
+  if (useSub) {
+    if (P && !P.visible) {
+      solidLabel('zp.Sl.u', 0, xAB, tToPx(P.Tpoly_C) - 8, getPhaseName('alphaA') + ' + ' + F + '(тв)');
+      solidLabel('zp.Sl.d', 0, xAB, Math.min(tToPx(P.Tpoly_C) + 16, PX.y1 - 12), getPhaseName('betaA') + ' + ' + F + '(тв)');
+    } else {
+      solidLabel('zp.Sl', 0, xAB, Math.min(tToPx(eL.T_C) + 20, PX.y1 - 12), getPhaseName('betaA') + ' + ' + F + '(тв)');
+    }
+    if (Q && !Q.visible) {
+      solidLabel('zp.Sr.u', xAB, 100, tToPx(Q.Tpoly_C) - 8, F + '(тв) + ' + getPhaseName('alphaB'));
+      solidLabel('zp.Sr.d', xAB, 100, Math.min(tToPx(Q.Tpoly_C) + 16, PX.y1 - 12), F + '(тв) + ' + getPhaseName('betaB'));
+    } else {
+      solidLabel('zp.Sr', xAB, 100, Math.min(tToPx(eR.T_C) + 20, PX.y1 - 12), F + '(тв) + ' + getPhaseName('betaB'));
+    }
+  } else {
+    const anyHidden = (P && !P.visible) || (Q && !Q.visible);
+    const betaTxt = getPhaseName('betaA') + '(тв) + ' + getPhaseName('betaB') + '(тв)';
+    if (anyHidden) {
+      const yLine = Math.max(P && !P.visible ? tToPx(P.Tpoly_C) : -1e9, Q && !Q.visible ? tToPx(Q.Tpoly_C) : -1e9);
+      solidLabel('zp.S.u', 0, 100, yLine - 8, getPhaseName('alphaA') + '(тв) + ' + getPhaseName('alphaB') + '(тв)');
+      solidLabel('zp.S.d', 0, 100, Math.min(yLine + 16, PX.y1 - 12), betaTxt);
+    } else {
+      solidLabel('zp.S', 0, 100, Math.min(tToPx(eL.T_C) + 20, PX.y1 - 12), betaTxt);
+    }
+  }
+  p.textStyle(p.NORMAL);
+}
+
+/* Пунктирные линии связи пиков ДТА с температурами на диаграмме (ТЗ 9.1) /
+ * Dashed lines linking DTA peaks to the temperatures on the diagram (spec 9.1) */
+function drawDTAConnectors(p) {
+  if (!state.showDTA || !model.dta) return;
+  const seen = {};
+  p.stroke(120, 120, 135, 170); p.strokeWeight(1);
+  p.drawingContext.setLineDash([5, 5]);
+  model.dta.peaks.forEach(pk => {
+    const key = pk.T_C.toFixed(1);
+    if (seen[key]) return;
+    seen[key] = 1;
+    const y = tToPx(pk.T_C);
+    if (y > PX.y0 + 2 && y < PX.y1 - 2) p.line(PX.x0, y, PX.x1, y);
+  });
+  p.drawingContext.setLineDash([]);
+  p.strokeWeight(1);
+}
+
+/* ============================================================================
+ * v4.1: ГЕНЕРАТОР КРИВЫХ ДТА (ТЗ 3)
+ * v4.1: DTA CURVE GENERATOR (SPEC 3)
+ *
+ * Для текущего состава собираются все температуры фазовых переходов; каждому
+ * переходу сопоставляется эффективная энтальпия = доля превращённой фазы
+ * (по правилу рычага) × энтальпия перехода (моль сплава, упрощение первого
+ * порядка). Пик — гауссова кривая условной ширины 7 °C; сигнал нормируется
+ * так, чтобы максимальный пик занимал 80% полувысоты графика (ТЗ 6.3).
+ * Нагрев: эндотермические пики ВНИЗ (красный #DC143C), охлаждение:
+ * экзотермические пики ВВЕРХ (синий #4169E1). Ось X совпадает со шкалой
+ * диаграммы — пунктирные линии (drawDTAConnectors) связывают пики с нею.
+ * All transition temperatures of the current composition are collected; each
+ * transition gets an effective enthalpy = transformed phase fraction (lever
+ * rule) × transition enthalpy (per mole of alloy, first-order simplification).
+ * A peak is a Gaussian of nominal width 7 °C; the signal is normalized so the
+ * tallest peak spans 80% of the half-height (spec 6.3). Heating: endothermic
+ * peaks point DOWN (red #DC143C); cooling: exothermic peaks point UP (blue
+ * #4169E1). The X axis matches the diagram scale — dashed lines
+ * (drawDTAConnectors) link the peaks to it.
+ * ========================================================================== */
+
+/*
+ * addDTAPeak (ТЗ 6.1): добавление пика в накопитель. Пропускаются переходы с
+ * нулевой эффективной энтальпией (фазы нет в данном сплаве).
+ * addDTAPeak (spec 6.1): push a peak into the accumulator. Transitions with a
+ * zero effective enthalpy (the phase is absent in this alloy) are skipped.
+ */
+function addDTAPeak(list, T_C, enthalpy, type, label, short) {
+  if (!(enthalpy > 0)) return;
+  list.push({ T_C: T_C, enthalpy: enthalpy, type: type, label: label, short: short });
+}
+
+/*
+ * generateDTACurve (ТЗ 6.1): сбор пиков для текущего состава и генерация сигнала.
+ * generateDTACurve (spec 6.1): collect the peaks for the current composition and build the signal.
+ */
+function generateDTACurve() {
+  const x = state.xB;
+  const peaks = [];
+  const useSub = compoundDrawn();
+  const F = useSub ? model.compound.formula : null;
+  const eL = useSub ? model.compound.e1 : model.eutectic;
+  const eR = useSub ? model.compound.e2 : model.eutectic;
+  const phAt = T => computePhase(x, T);            // фаза при данной T / phase at a given T
+
+  /* --- Чистый компонент A (x = 0) / Pure component A --- */
+  if (x <= 1e-4) {
+    if (model.polyA) {
+      addDTAPeak(peaks, model.polyA.Tpoly_C, state.dHpolyA, 'endo',
+        'Полиморфный переход ' + getPhaseName('betaA') + ' → ' + getPhaseName('alphaA'), 'α↔β A');
+    }
+    addDTAPeak(peaks, state.TmA_C, state.dH_A, 'endo', 'Плавление ' + getPhaseName('A'), 'T_пл A');
+  }
+  /* --- Чистый компонент B (x = 100) / Pure component B --- */
+  else if (x >= 100 - 1e-4) {
+    if (model.polyB) {
+      addDTAPeak(peaks, model.polyB.Tpoly_C, state.dHpolyB, 'endo',
+        'Полиморфный переход ' + getPhaseName('betaB') + ' → ' + getPhaseName('alphaB'), 'α↔β B');
+    }
+    addDTAPeak(peaks, state.TmB_C, state.dH_B, 'endo', 'Плавление ' + getPhaseName('B'), 'T_пл B');
+  }
+  /* --- Чистое соединение (x = x_AB) / Pure compound --- */
+  else if (useSub && Math.abs(x - model.compound.xABpct) < COMPOUND_TOL) {
+    addDTAPeak(peaks, state.TmAB_C, state.dH_AB, 'endo', 'Плавление соединения ' + F, 'T_пл ' + F);
+  }
+  /* --- Двух- или многокомпонентный сплав / Multi-component alloy --- */
+  else {
+    /* В простом режиме "подсистема" — сторона эвтектики (нужно для пиков
+     * полиморфизма) / In the simple mode the "subsystem" is the eutectic side */
+    const inSub1 = useSub ? x < model.compound.xABpct : x < eL.xPct;
+    const e = inSub1 ? eL : eR;
+
+    /* Полиморфный переход / перитектика компонента стороны / Polymorphic transition / peritectic of the side component */
+    if (inSub1 && model.polyA) {
+      const P = model.polyA;
+      if (P.visible) {
+        /* Видимая перитектика: инвариант L + α ↔ β при T_poly; α есть только
+         * при x ≤ x_per (ТЗ 2.2). Энтальпия = доля α × ΔH_poly /
+         * Visible peritectic: the invariant L + α ↔ β at T_poly; α exists only
+         * for x ≤ x_per (spec 2.2). Enthalpy = α fraction × ΔH_poly */
+        if (x <= P.xPerPct) {
+          const fAlpha = phAt(P.Tpoly_C + 0.5).fSolidA;
+          addDTAPeak(peaks, P.Tpoly_C, fAlpha / 100 * state.dHpolyA, 'endo',
+            'Перитектика L + ' + getPhaseName('alphaA') + ' ↔ ' + getPhaseName('betaA') + ' (и полим. переход)', 'Пер A');
+        }
+      } else if (x < (useSub ? model.compound.xABpct : eL.xPct)) {
+        /* Невидимая перитектика: твёрдотельный переход β → α ниже солидуса /
+         * Hidden peritectic: the solid-state β → α transition below the solidus */
+        const fA = phAt(P.Tpoly_C - 0.5).fSolidA;
+        addDTAPeak(peaks, P.Tpoly_C, fA / 100 * state.dHpolyA, 'endo',
+          'Полиморфный переход ' + getPhaseName('betaA') + ' → ' + getPhaseName('alphaA'), 'α↔β A');
+      }
+    }
+    if (!inSub1 && model.polyB) {
+      const Q = model.polyB;
+      if (Q.visible) {
+        if (x >= Q.xPerPct) {
+          const fAlpha = phAt(Q.Tpoly_C + 0.5).fSolidB;
+          addDTAPeak(peaks, Q.Tpoly_C, fAlpha / 100 * state.dHpolyB, 'endo',
+            'Перитектика L + ' + getPhaseName('alphaB') + ' ↔ ' + getPhaseName('betaB') + ' (и полим. переход)', 'Пер B');
+        }
+      } else if (x > (useSub ? model.compound.xABpct : eR.xPct)) {
+        const fB = phAt(Q.Tpoly_C - 0.5).fSolidB;
+        addDTAPeak(peaks, Q.Tpoly_C, fB / 100 * state.dHpolyB, 'endo',
+          'Полиморфный переход ' + getPhaseName('betaB') + ' → ' + getPhaseName('alphaB'), 'α↔β B');
+      }
+    }
+
+    /* Эвтектика: доля эвтектики в сплаве × взвешенная энтальпия смеси /
+     * Eutectic: the eutectic fraction of the alloy × the weighted mixture enthalpy */
+    const phEut = phAt(e.T_C - 0.5);
+    if (phEut.fEutectic > 0) {
+      let hEut;
+      if (!useSub) {
+        hEut = (1 - e.xFrac) * state.dH_A + e.xFrac * state.dH_B;
+      } else if (inSub1) {
+        const fAB = e.xPct / model.compound.xABpct;          // доля AB в эвтектике / AB share in the eutectic
+        hEut = (1 - fAB) * state.dH_A + fAB * state.dH_AB;
+      } else {
+        const fB = (e.xPct - model.compound.xABpct) / (100 - model.compound.xABpct);
+        hEut = fB * state.dH_B + (1 - fB) * state.dH_AB;
+      }
+      addDTAPeak(peaks, e.T_C, phEut.fEutectic / 100 * hEut, 'endo',
+        'Эвтектика (' + (useSub ? (inSub1 ? getPhaseName('betaA') + '+' + F : F + '+' + getPhaseName('betaB'))
+                                               : getPhaseName('betaA') + '+' + getPhaseName('betaB')) + ')', 'Эвт');
+    }
+
+    /* Ликвидус: конец плавления первичных кристаллов /
+     * Liquidus: the end of melting of the primary crystals */
+    const xNearEut = Math.abs(x - e.xPct) < EUT_TOL;
+    const Tliq = xNearEut ? e.T_C : k2c(useSub
+      ? (x < eL.xPct ? liquidusTempA_eff(x / 100)
+       : (x < model.compound.xABpct ? liquidusTempAB_left(x / 100)
+        : (x < eR.xPct ? liquidusTempAB_right(x / 100) : liquidusTempB_eff(x / 100))))
+      : (x < eL.xPct ? liquidusTempA_eff(x / 100) : liquidusTempB_eff(x / 100)));
+    const phLiq = phAt(Tliq - 0.5);
+    const fRem = phLiq.fSolidA + phLiq.fSolidB + phLiq.fSolidAB;      // доля последнего твёрдого / last solid fraction
+    if (fRem > 0 && !xNearEut) {
+      /* Энтальпия фазы, кристаллизующейся на действующей ветви ликвидуса /
+       * Enthalpy of the phase crystallizing on the active liquidus branch */
+      const hPhase = useSub
+        ? (x < eL.xPct ? state.dH_A : (x > eR.xPct ? state.dH_B : state.dH_AB))
+        : (x < eL.xPct ? state.dH_A : state.dH_B);
+      addDTAPeak(peaks, Tliq, fRem / 100 * hPhase, 'endo',
+        'Ликвидус (конец плавления / end of melting)', 'Ликв');
+    }
+  }
+
+  /* --- Сигнал: гауссовы пики, нормировка 80% (ТЗ 6.3) /
+   * --- Signal: Gaussian peaks, 80% normalization (spec 6.3) --- */
+  const Tlo = T_MIN_C, Thi = Math.max(view.tTop, T_MIN_C + 50);
+  const N = 240;
+  const sig = [];
+  let maxAmp = 0;
+  for (let i = 0; i <= N; i++) {
+    const T = Tlo + (Thi - Tlo) * i / N;
+    let a = 0;
+    peaks.forEach(pk => {
+      const dT = (T - pk.T_C) / DTA_PEAK_WIDTH;
+      a += pk.enthalpy * Math.exp(-dT * dT);
+    });
+    sig.push([T, a]);
+    if (a > maxAmp) maxAmp = a;
+  }
+  const scale = maxAmp > 1e-9 ? 0.8 / maxAmp : 0;    // макс. пик = 0.8 полувысоты / tallest peak = 0.8 of the half-height
+  sig.forEach(pt => { pt[1] *= scale; });
+  peaks.forEach(pk => { pk.height = pk.enthalpy * scale; });
+  return { xPct: x, Tlo: Tlo, Thi: Thi, sig: sig, peaks: peaks, scale: scale };
+}
+
+/* Ширина холста ДТА / DTA canvas width */
+const DTA_W = 560;
+
+/* Скоут ДТА / DTA sketch */
+const dtaSketch = (p) => {
+  p.setup = () => {
+    p.createCanvas(DTA_W, DTA_H); p.noLoop();
+    /* v4.2: двойной клик по подписи пика возвращает её на место /
+     * v4.2: double click restores a dragged peak label */
+    p.canvas.addEventListener('dblclick', (ev) => labelDblClick(ev, p, 'dta'));
+  };
+  p.draw = () => drawDTACurve(p);
+  /* v4.2: перетаскивание подписей пиков ДТА / v4.2: dragging of DTA peak labels */
+  p.mousePressed = () => {
+    const inside = p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height;
+    if (!inside) return;
+    const hit = labelHitAt('dta', p.mouseX, p.mouseY);
+    if (hit) startLabelDrag('dta', hit, p.mouseX, p.mouseY);
+  };
+  p.mouseDragged = () => moveLabelDrag(p.mouseX, p.mouseY);
+  p.mouseReleased = () => endLabelDrag();
+  p.mouseMoved = () => updateLabelCursor(p, 'dta');
+};
+
+/*
+ * drawDTACurve (ТЗ 6.1): отрисовка графика. Нагрев — красная кривая ниже
+ * базовой линии, охлаждение — синяя выше; подписи пиков короткими метками.
+ * drawDTACurve (spec 6.1): plot rendering. Heating — the red curve below the
+ * baseline, cooling — the blue one above; peaks are annotated with short tags.
+ */
+function drawDTACurve(p) {
+  p.background(251);
+  p.textFont('Arial');
+  LBL_BOXES.dta.length = 0;               // реестр подписей текущего кадра / this frame's label registry
+  if (!model || !model.dta || !model.dta.sig.length) {
+    p.noStroke(); p.fill(120); p.textSize(13); p.textAlign(p.CENTER, p.CENTER);
+    p.text('Нет данных: включите кривую ДТА / No data: enable the DTA curve', DTA_W / 2, DTA_H / 2);
+    return;
+  }
+  const d = model.dta;
+  const x0 = 46, x1 = DTA_W - 16, yTop = 22, yBot = DTA_H - 40;
+  const yMid = (yTop + yBot) / 2, halfH = (yBot - yTop) / 2;
+  const T2X = T => x0 + (T - d.Tlo) / (d.Thi - d.Tlo) * (x1 - x0);
+
+  /* Сетка и деления оси T / Grid and T-axis ticks */
+  const step = niceStep(d.Thi - d.Tlo, 8);
+  p.stroke(228); p.strokeWeight(1);
+  for (let t = Math.ceil(d.Tlo / step) * step; t <= d.Thi; t += step) {
+    p.line(T2X(t), yTop, T2X(t), yBot);
+    p.noStroke(); p.fill(70); p.textSize(10); p.textAlign(p.CENTER, p.TOP);
+    p.text(Math.round(t) + '°', T2X(t), yBot + 6);
+    p.stroke(228);
+  }
+  /* Базовая линия ΔT = 0 / ΔT = 0 baseline */
+  p.stroke(70); p.strokeWeight(1.5);
+  p.line(x0, yMid, x1, yMid);
+  p.line(x0, yTop, x0, yBot);
+  p.strokeWeight(1);
+  p.noStroke(); p.fill(70); p.textSize(10); p.textAlign(p.RIGHT, p.CENTER);
+  p.text('ΔT=0', x0 - 5, yMid);
+  p.textAlign(p.LEFT, p.CENTER);
+  p.text('нагрев / heating', x0 + 6, yBot - 10);
+  p.text('охлаждение / cooling', x0 + 6, yTop + 10);
+
+  /* Кривая охлаждения (вверх, синяя, экзотермия) / Cooling curve (up, blue, exothermic) */
+  p.noFill(); p.stroke(COL.DTA_COOL[0], COL.DTA_COOL[1], COL.DTA_COOL[2]); p.strokeWeight(2);
+  p.beginShape();
+  d.sig.forEach(pt => p.vertex(T2X(pt[0]), yMid - pt[1] * halfH));
+  p.endShape();
+  /* Кривая нагрева (вниз, красная, эндотермия) / Heating curve (down, red, endothermic) */
+  p.stroke(COL.DTA_HEAT[0], COL.DTA_HEAT[1], COL.DTA_HEAT[2]);
+  p.beginShape();
+  d.sig.forEach(pt => p.vertex(T2X(pt[0]), yMid + pt[1] * halfH));
+  p.endShape();
+  p.strokeWeight(1);
+
+  /* Подписи пиков (короткие метки, ТЗ 3.4) / Peak labels (short tags, spec 3.4) */
+  p.textStyle(p.BOLD);
+  const seen = {};
+  d.peaks.forEach(pk => {
+    const key = pk.T_C.toFixed(1);
+    const up = seen[key] !== undefined;              // два пика при одной T — метки в разные стороны / two peaks at one T
+    seen[key] = 1;
+    const px = T2X(pk.T_C);
+    if (px < x0 + 8 || px > x1 - 8) return;
+    /* Точка привязки — вершина пика / the anchor is the peak tip */
+    if (up) {
+      p.fill(COL.DTA_COOL[0], COL.DTA_COOL[1], COL.DTA_COOL[2]);
+      drawLabel(p, 'dta', 'dta.pk.' + key + 'u', px, yMid - pk.height * halfH, pk.short,
+        { size: 10, align: 'center', valign: 'bottom', dy: -4 });
+    } else {
+      p.fill(COL.DTA_HEAT[0], COL.DTA_HEAT[1], COL.DTA_HEAT[2]);
+      drawLabel(p, 'dta', 'dta.pk.' + key + 'd', px, yMid + pk.height * halfH, pk.short,
+        { size: 10, align: 'center', valign: 'bottom', dy: 12 });
+    }
+  });
+  p.textStyle(p.NORMAL);
+}
+
+/*
+ * Экспорт кривой ДТА в CSV (ТЗ 9.3): сигнал (нагрев: ΔT < 0 — эндотермия,
+ * охлаждение: ΔT > 0 — экзотермия) и список пиков.
+ * DTA curve export to CSV (spec 9.3): the signal (heating: ΔT < 0 — endothermic,
+ * cooling: ΔT > 0 — exothermic) and the peak list.
+ */
+function exportDTACsv() {
+  if (!model || !model.dta) {
+    showToast('Сначала сгенерируйте кривую ДТА / Generate the DTA curve first');
+    return;
+  }
+  const d = model.dta;
+  let csv = '\uFEFF' + 'Temperature_C;dT_heating;dT_cooling\n';
+  d.sig.forEach(pt => {
+    csv += pt[0].toFixed(2) + ';' + (-pt[1]).toFixed(5) + ';' + pt[1].toFixed(5) + '\n';
+  });
+  csv += '\nPeak_T_C;Peak_label;Peak_type\n';
+  d.peaks.forEach(pk => {
+    csv += pk.T_C.toFixed(2) + ';' + pk.label + ';' + pk.type + '\n';
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'dta_x' + d.xPct.toFixed(1) + 'pct_B.csv';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  showToast('✓ CSV скачан / CSV downloaded');
 }
 
 /* ============================================================================
@@ -1715,32 +3244,33 @@ function drawZoneLabelsCompound(p, t) {
    * Liquid — centered, but not on the compound peak */
   const liquidX = Math.abs(50 - c.xABpct) > 12 ? 50 : (c.xABpct < 50 ? 75 : 25);
   p.fill(150, 60, 90, a);
-  p.text('Liquid / Жидкость', xToPx(liquidX), tToPx((M(liquidX) + view.tTop) / 2));
+  drawLabel(p, 'diag', 'zc.Liquid', xToPx(liquidX), tToPx((M(liquidX) + view.tTop) / 2), 'Liquid / Жидкость', { size: 12, alpha: a });
 
   /* Универсальная подпись линзы с адаптивной длиной /
    * Universal lens label with adaptive length */
-  const lensLabel = (xFrom, xTo, TE, full, short, col) => {
+  const lensLabel = (id, xFrom, xTo, TE, full, short, col) => {
     const wPx = (xTo - xFrom) / 100 * (PX.x1 - PX.x0);
     if (wPx < 34) return;
     const xMid = (xFrom + xTo) / 2;
     const tMid = TE + 0.25 * (M(xMid) - TE);
     p.fill(col[0], col[1], col[2], a);
-    p.text(wPx >= 92 ? full : short, xToPx(xMid), tToPx(tMid));
+    drawLabel(p, 'diag', id, xToPx(xMid), tToPx(tMid), wPx >= 92 ? full : short, { size: 12, alpha: a });
   };
-  lensLabel(0, me.x1, me.T1, 'L + A(тв)', 'L+A', COL.A_DARK);
-  lensLabel(me.x1, c.xABpct, me.T1, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
-  lensLabel(c.xABpct, me.x2, me.T2, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
-  lensLabel(me.x2, 100, me.T2, 'L + B(тв)', 'L+B', COL.B_DARK);
+  lensLabel('zc.LA', 0, me.x1, me.T1, 'L + A(тв)', 'L+A', COL.A_DARK);
+  lensLabel('zc.LAB.l', me.x1, c.xABpct, me.T1, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
+  lensLabel('zc.LAB.r', c.xABpct, me.x2, me.T2, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
+  lensLabel('zc.LB', me.x2, 100, me.T2, 'L + B(тв)', 'L+B', COL.B_DARK);
 
   /* Твёрдые зоны / solid zones */
-  const solidLabel = (xFrom, xTo, TE, full, short) => {
+  const solidLabel = (id, xFrom, xTo, TE, full, short) => {
     const wPx = (xTo - xFrom) / 100 * (PX.x1 - PX.x0);
     if (wPx < 56) return;
     p.fill(90, 90, 90, a);
-    p.text(wPx >= 120 ? full : short, xToPx((xFrom + xTo) / 2), Math.min(tToPx(TE) + 20, PX.y1 - 12));
+    drawLabel(p, 'diag', id, xToPx((xFrom + xTo) / 2), Math.min(tToPx(TE) + 20, PX.y1 - 12),
+      wPx >= 120 ? full : short, { size: 12, alpha: a });
   };
-  solidLabel(0, c.xABpct, me.T1, 'A(тв) + ' + F + '(тв)', 'A + ' + F);
-  solidLabel(c.xABpct, 100, me.T2, F + '(тв) + B(тв)', F + ' + B');
+  solidLabel('zc.Solid.l', 0, c.xABpct, me.T1, 'A(тв) + ' + F + '(тв)', 'A + ' + F);
+  solidLabel('zc.Solid.r', c.xABpct, 100, me.T2, F + '(тв) + B(тв)', F + ' + B');
   p.textStyle(p.NORMAL);
 }
 
@@ -1759,7 +3289,7 @@ function drawCompoundMarks(p, t) {
   const F = c.formula;
 
   /* Маркеры и подписи E1/E2 / E1/E2 markers and labels */
-  const mark = (xE, TE, name) => {
+  const mark = (id, xE, TE, name) => {
     const px = xToPx(xE), py = tToPx(TE);
     p.stroke(20, 20, 20, a); p.strokeWeight(1.5); p.fill(255, 255, 255, a);
     p.circle(px, py, 9);
@@ -1767,14 +3297,12 @@ function drawCompoundMarks(p, t) {
     const txt = name + ': ' + xE.toFixed(1) + '%, ' + TE.toFixed(0) + '°C';
     /* Подпись слева, если помещается, иначе справа / label left if it fits, else right */
     const putLeft = (name === 'Эвтектика E1' ? px > PX.x0 + 150 : px > PX.x1 - 60);
-    p.textAlign(putLeft ? p.RIGHT : p.LEFT, p.BOTTOM);
-    p.stroke(255, 255, 255, a); p.strokeWeight(3);
-    p.text(txt, px + (putLeft ? -10 : 10), py - 14);
-    p.noStroke();
-    p.text(txt, px + (putLeft ? -10 : 10), py - 14);
+    drawLabel(p, 'diag', id, px, py, txt,
+      { size: 11, align: putLeft ? 'right' : 'left', valign: 'bottom',
+        dx: putLeft ? -10 : 10, dy: -14, halo: true, alpha: a });
   };
-  mark(me.x1, me.T1, 'Эвтектика E1 / Eutectic E1');
-  mark(me.x2, me.T2, 'Эвтектика E2 / Eutectic E2');
+  mark('eut1', me.x1, me.T1, 'Эвтектика E1 / Eutectic E1');
+  mark('eut2', me.x2, me.T2, 'Эвтектика E2 / Eutectic E2');
 
   /* Пик соединения (конгруэнтное плавление) / Compound peak (congruent melting) */
   const peakT = morphAt(pts, c.xABpct);
@@ -1786,15 +3314,13 @@ function drawCompoundMarks(p, t) {
   /* Формула у вертикальной линии (тултип дублирует её при наведении) /
    * Formula next to the vertical line (a tooltip repeats it on hover) */
   p.noStroke(); p.fill(COL.AB_DARK[0], COL.AB_DARK[1], COL.AB_DARK[2], a);
-  p.textSize(12); p.textStyle(p.BOLD);
+  p.textStyle(p.BOLD);
   const onRight = pxP < PX.x1 - 50;
-  p.textAlign(onRight ? p.LEFT : p.RIGHT, p.CENTER);
   const labelT = (peakT + Math.max(me.T1, me.T2)) / 2;
   const ty = clamp(tToPx(labelT), PX.y0 + 10, PX.y1 - 10);
-  p.stroke(255, 255, 255, a); p.strokeWeight(3);
-  p.text(F, pxP + (onRight ? 7 : -7), ty);
-  p.noStroke();
-  p.text(F, pxP + (onRight ? 7 : -7), ty);
+  drawLabel(p, 'diag', 'cmp.F', pxP, ty, F,
+    { size: 12, align: onRight ? 'left' : 'right', valign: 'center',
+      dx: onRight ? 7 : -7, halo: true, alpha: a });
   p.strokeWeight(1);
   p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
 }
@@ -1927,14 +3453,34 @@ function drawFloatingCrystals(p, ph) {
   const n = Math.round(clamp(fSolid, 0, 1) * cache.squares.length);
   const c = isA ? COL.A : COL.B;
   const dark = isA ? COL.A_DARK : COL.B_DARK;
+  /* v4.1: полиморфная форма кристалла: 0 = α (квадрат), 1 = β (ромб);
+   * замена — плавный кроссфейд на тех же позициях (ТЗ 2.6, 9.2) /
+   * v4.1: crystal polymorphic form: 0 = α (square), 1 = β (diamond);
+   * the replacement is a smooth crossfade at the same positions (spec 2.6, 9.2) */
+  const formF = clamp(isA ? polyAnim.A : polyAnim.B, 0, 1);
   for (let i = 0; i < n; i++) {
     const sq = cache.squares[i];
-    p.push();
-    p.translate(MX.x0 + sq.u * (MX.x1 - MX.x0), MX.y0 + sq.v * (MX.y1 - MX.y0));
-    p.rotate(sq.rot);
-    p.fill(c[0], c[1], c[2]); p.stroke(dark[0], dark[1], dark[2]); p.strokeWeight(1);
-    p.rect(-sq.s / 2, -sq.s / 2, sq.s, sq.s, 2);
-    p.pop();
+    const cx = MX.x0 + sq.u * (MX.x1 - MX.x0), cy = MX.y0 + sq.v * (MX.y1 - MX.y0);
+    if (formF < 0.98) {
+      /* α — строго осевой квадрат (без поворота, чтобы контраст с ромбом был очевиден) /
+       * α — a strictly axis-aligned square (no rotation, so the diamond contrast is obvious) */
+      p.push();
+      p.translate(cx, cy);
+      p.fill(c[0], c[1], c[2], 255 * (1 - formF)); p.stroke(dark[0], dark[1], dark[2], 255 * (1 - formF)); p.strokeWeight(1);
+      p.rect(-sq.s / 2, -sq.s / 2, sq.s, sq.s, 2);
+      p.pop();
+    }
+    if (formF > 0.02) {
+      /* β — ромб: точный поворот 45°, чуть меньшего размера, обводка толще /
+       * β — a diamond: exact 45° rotation, slightly smaller, thicker outline */
+      const d = sq.s * 0.78;
+      p.push();
+      p.translate(cx, cy);
+      p.rotate(p.QUARTER_PI);
+      p.fill(c[0], c[1], c[2], 255 * formF); p.stroke(dark[0], dark[1], dark[2], 255 * formF); p.strokeWeight(1.5);
+      p.rect(-d / 2, -d / 2, d, d, 1);
+      p.pop();
+    }
   }
 }
 
@@ -1974,6 +3520,9 @@ function drawPrimaryCrystals(p, isA, fPrimary) {
   const cw = (MX.x1 - MX.x0) / cols, ch = (MX.y1 - MX.y0) / rows;
   const c = isA ? COL.A : COL.B;
   const dark = isA ? COL.A_DARK : COL.B_DARK;
+  /* v4.1: полиморфная форма: α — многоугольник, β — ромб (кроссфейд, ТЗ 2.6/9.2) /
+   * v4.1: polymorphic form: α — polygon, β — diamond (crossfade, spec 2.6/9.2) */
+  const formF = clamp(isA ? polyAnim.A : polyAnim.B, 0, 1);
   p.strokeWeight(2);
   for (let i = 0; i < n; i++) {
     const col = i % cols, row = Math.floor(i / cols);
@@ -1983,15 +3532,110 @@ function drawPrimaryCrystals(p, isA, fPrimary) {
     const cx = clamp(MX.x0 + (col + 0.5) * cw + jx, MX.x0 + r * 0.4, MX.x1 - r * 0.4);
     const cy = clamp(MX.y0 + (row + 0.5) * ch + jy, MX.y0 + r * 0.4, MX.y1 - r * 0.4);
     const poly = cache.polys[i % cache.polys.length];
-    p.fill(c[0], c[1], c[2]); p.stroke(dark[0], dark[1], dark[2]);
-    p.beginShape();
-    for (let j = 0; j < 8; j++) {
-      const a = (j / 8) * Math.PI * 2 + poly.rot;
-      const rad = r * poly.verts[j];
-      p.vertex(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
+    /* α-фаза: неправильный многоугольник (гаснет при переходе) /
+     * α phase: irregular polygon (fades out at the transition) */
+    if (formF < 0.98) {
+      p.fill(c[0], c[1], c[2], 255 * (1 - formF)); p.stroke(dark[0], dark[1], dark[2], 255 * (1 - formF));
+      p.beginShape();
+      for (let j = 0; j < 8; j++) {
+        const a = (j / 8) * Math.PI * 2 + poly.rot;
+        const rad = r * poly.verts[j];
+        p.vertex(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
+      }
+      p.endShape(p.CLOSE);
     }
-    p.endShape(p.CLOSE);
+    /* β-фаза: ромб с ФИКСИРОВАННОЙ вертикальной ориентацией ◆ (проявляется при переходе) /
+     * β phase: a diamond with FIXED vertical orientation ◆ (fades in at the transition) */
+    if (formF > 0.02) {
+      const d = r * 1.55;                                     // диагональ ромба / diamond diagonal
+      p.fill(c[0], c[1], c[2], 255 * formF); p.stroke(dark[0], dark[1], dark[2], 255 * formF);
+      p.beginShape();
+      p.vertex(cx, cy - d * 0.5);
+      p.vertex(cx + d * 0.5, cy);
+      p.vertex(cx, cy + d * 0.5);
+      p.vertex(cx - d * 0.5, cy);
+      p.endShape(p.CLOSE);
+    }
   }
+  p.strokeWeight(1);
+}
+
+/* ============================================================================
+ * v4.1: АНИМАЦИЯ ПОЛИМОРФНОЙ ЗАМЕНЫ КРИСТАЛЛОВ (ТЗ 9.2)
+ * v4.1: POLYMORPHIC CRYSTAL REPLACEMENT ANIMATION (spec 9.2)
+ * polyAnim.A / polyAnim.B — отображаемая форма компонента: 0 = α (квадрат),
+ * 1 = β (ромб); при пересечении T_poly значение плавно меняется за 0.5 с.
+ * polyAnim.A / polyAnim.B — the displayed form of a component: 0 = α (square),
+ * 1 = β (diamond); crossing T_poly smoothly changes it over 0.5 s.
+ * ========================================================================== */
+const polyAnim = { A: 0, B: 0, fromA: 0, fromB: 0, tA: 0, tB: 0, t0: 0, active: false, raf: null };
+
+/* Целевая форма кристаллов компонента в текущей точке / Target crystal form at the current point */
+function polyFormTarget(which) {
+  const ph = model && model.phase;
+  if (!ph) return 0;
+  const beta = which === 'A' ? ph.aForm === 'beta' : ph.bForm === 'beta';
+  return beta ? 1 : 0;
+}
+
+/*
+ * Значение морфа по таймеру: вызывается при КАЖДОЙ перерисовке, поэтому
+ * анимация корректно завершается даже в окружениях, где rAF замедлен.
+ * Clock-based morph value: called on EVERY redraw, so the animation finishes
+ * correctly even in environments where rAF is throttled.
+ */
+function applyPolyAnimClock(now) {
+  const raw = clamp((now - polyAnim.t0) / POLY_ANIM_MS, 0, 1);
+  const e = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;   // easeInOutQuad
+  polyAnim.A = polyAnim.fromA + (polyAnim.tA - polyAnim.fromA) * e;
+  polyAnim.B = polyAnim.fromB + (polyAnim.tB - polyAnim.fromB) * e;
+  if (raw >= 1) { polyAnim.active = false; polyAnim.A = polyAnim.tA; polyAnim.B = polyAnim.tB; }
+}
+
+/* Запуск анимации, если целевая форма изменилась / Start the animation when the target form changed */
+function syncPolyAnim() {
+  const targetA = polyFormTarget('A'), targetB = polyFormTarget('B');
+  if (polyAnim.A === targetA && polyAnim.B === targetB) return;
+  polyAnim.fromA = polyAnim.A;
+  polyAnim.fromB = polyAnim.B;
+  polyAnim.tA = targetA;
+  polyAnim.tB = targetB;
+  polyAnim.t0 = performance.now();
+  polyAnim.active = true;
+  if (polyAnim.raf) cancelAnimationFrame(polyAnim.raf);
+  const step = (now) => {
+    if (!polyAnim.active) { polyAnim.raf = null; return; }
+    applyPolyAnimClock(now);
+    if (microP) microP.redraw();
+    if (polyAnim.active) polyAnim.raf = requestAnimationFrame(step);
+    else polyAnim.raf = null;
+  };
+  polyAnim.raf = requestAnimationFrame(step);
+}
+
+/*
+ * Контуры формы фазы в чистом компоненте: α — квадраты, β — ромбы
+ * (кроссфейд той же анимацией) / Phase-form outlines in the pure component:
+ * α — squares, β — diamonds (crossfade with the same animation).
+ */
+function drawPureFormOutlines(p, formF, col) {
+  const spots = [[0.3, 0.3], [0.7, 0.42], [0.5, 0.75]];
+  spots.forEach((s, i) => {
+    const cx = MX.x0 + s[0] * (MX.x1 - MX.x0), cy = MX.y0 + s[1] * (MX.y1 - MX.y0);
+    const r = 34 + i * 6;
+    if (formF < 0.98) {
+      p.push(); p.translate(cx, cy); p.rotate(i * 0.3);
+      p.noFill(); p.stroke(col[0], col[1], col[2], 120 * (1 - formF)); p.strokeWeight(2);
+      p.rect(-r / 2, -r / 2, r, r, 3);
+      p.pop();
+    }
+    if (formF > 0.02) {
+      p.push(); p.translate(cx, cy); p.rotate(i * 0.3 + p.QUARTER_PI);
+      p.noFill(); p.stroke(col[0], col[1], col[2], 120 * formF); p.strokeWeight(2);
+      p.rect(-r * 0.4, -r * 0.4, r * 0.8, r * 0.8, 2);
+      p.pop();
+    }
+  });
   p.strokeWeight(1);
 }
 
@@ -2124,6 +3768,11 @@ function drawMicrostructure(p) {
   p.text('x = ' + ph.x.toFixed(1) + '% B,  T = ' + ph.T.toFixed(0) + ' °C', MIC_W / 2, 14);
   p.textStyle(p.NORMAL);
 
+  /* v4.1: анимация полиморфной замены кристаллов (ТЗ 9.2) /
+   * v4.1: polymorphic crystal replacement animation (spec 9.2) */
+  syncPolyAnim();
+  if (polyAnim.active) applyPolyAnimClock(performance.now());   // ход по таймеру при каждой перерисовке / clock-driven on every redraw
+
   /* Рисуем внутри тигля с отсечением по форме /
    * Draw inside the crucible clipped to its shape */
   const ctx = p.drawingContext;
@@ -2150,9 +3799,11 @@ function drawMicrostructure(p) {
     if (ph.pure === 'A') {
       p.fill(COL.A[0], COL.A[1], COL.A[2]);
       p.rect(MX.x0, MX.y0, MX.x1 - MX.x0, MX.y1 - MX.y0);
+      drawPureFormOutlines(p, polyAnim.A, COL.A_DARK);        // v4.1: форма фазы / phase form
     } else if (ph.pure === 'B') {
       p.fill(COL.B[0], COL.B[1], COL.B[2]);
       p.rect(MX.x0, MX.y0, MX.x1 - MX.x0, MX.y1 - MX.y0);
+      drawPureFormOutlines(p, polyAnim.B, COL.B_DARK);        // v4.1: форма фазы / phase form
     } else if (ph.pure === 'AB') {
       /* v3.0: чистое соединение — однородная оранжевая структура без эвтектики /
        * v3.0: pure compound — uniform orange structure without eutectic */
@@ -2192,6 +3843,10 @@ function shortName(s) { return s.length > 12 ? s.slice(0, 11) + '…' : s; }
 function drawMicroLabels(p, ph) {
   const y = MX.y1 + 24;
   const sA = shortName(state.nameA), sB = shortName(state.nameB);
+  /* v4.1: имена кристаллических фаз с учётом полиморфной формы (ТЗ 4.2) /
+   * v4.1: crystal phase names accounting for the polymorphic form (spec 4.2) */
+  const nAcr = shortName(state.showPolyA && model.polyA ? formatPolymorphName(state.nameA, ph.aForm) : state.nameA);
+  const nBcr = shortName(state.showPolyB && model.polyB ? formatPolymorphName(state.nameB, ph.bForm) : state.nameB);
   const compoundActive = state.showCompound && model.compound && !model.compound.unstable;
   const F = compoundActive ? model.compound.formula : getFormulaString(state.m, state.n);
   p.noStroke(); p.textAlign(p.CENTER, p.TOP); p.textSize(13); p.textStyle(p.BOLD);
@@ -2208,13 +3863,13 @@ function drawMicroLabels(p, ph) {
       c = [170, 70, 100];
       break;
     case 'L+A':
-      line1 = 'Жидкость + кристаллы ' + sA + ' / Liquid + A crystals';
+      line1 = 'Жидкость + кристаллы ' + nAcr + ' / Liquid + ' + nAcr + ' crystals';
       line2 = 'Твёрдое: ' + ph.fSolidA.toFixed(1) + '% • Жидкость: ' + ph.fLiquid.toFixed(1) + '%';
       line3 = 'Жидкость обогащена B: x_ж = ' + ph.xLiquid.toFixed(1) + '% B / liquid enriched in B';
       c = COL.A_DARK;
       break;
     case 'L+B':
-      line1 = 'Жидкость + кристаллы ' + sB + ' / Liquid + B crystals';
+      line1 = 'Жидкость + кристаллы ' + nBcr + ' / Liquid + ' + nBcr + ' crystals';
       line2 = 'Твёрдое: ' + ph.fSolidB.toFixed(1) + '% • Жидкость: ' + ph.fLiquid.toFixed(1) + '%';
       line3 = 'Жидкость обогащена A: x_ж = ' + ph.xLiquid.toFixed(1) + '% B / liquid enriched in A';
       c = COL.B_DARK;
@@ -2231,12 +3886,12 @@ function drawMicroLabels(p, ph) {
       break;
     case 'SOLID':
       if (ph.pure === 'A') {
-        line1 = 'Твёрдый чистый ' + sA + ' / Pure solid A';
-        line2 = '100% фазы A / 100% phase A';
+        line1 = 'Твёрдый чистый ' + nAcr + ' / Pure solid ' + nAcr;
+        line2 = '100% фазы ' + (state.showPolyA && model.polyA ? (ph.aForm === 'beta' ? 'β-' : 'α-') + sA : sA);
         c = COL.A_DARK;
       } else if (ph.pure === 'B') {
-        line1 = 'Твёрдый чистый ' + sB + ' / Pure solid B';
-        line2 = '100% фазы B / 100% phase B';
+        line1 = 'Твёрдый чистый ' + nBcr + ' / Pure solid ' + nBcr;
+        line2 = '100% фазы ' + (state.showPolyB && model.polyB ? (ph.bForm === 'beta' ? 'β-' : 'α-') + sB : sB);
         c = COL.B_DARK;
       } else if (ph.pure === 'AB') {
         /* v3.0: чистое соединение / v3.0: pure compound */
@@ -2258,20 +3913,20 @@ function drawMicroLabels(p, ph) {
         line3 = 'Всего ' + F + ': ' + ph.fSolidAB.toFixed(1) + '% • A: ' + ph.fSolidA.toFixed(1) + '% • B: ' + ph.fSolidB.toFixed(1) + '%';
         c = COL.AB_DARK;
       } else if (ph.fPrimaryA > 0) {
-        line1 = compoundActive ? 'Первичные A + эвтектика (' + ph.eutecticType + ') / Primary A + eutectic'
-                              : 'Первичные A + эвтектика / Primary A + eutectic';
+        line1 = compoundActive ? 'Первичные ' + nAcr + ' + эвтектика (' + ph.eutecticType + ') / Primary ' + nAcr + ' + eutectic'
+                              : 'Первичные ' + nAcr + ' + эвтектика / Primary ' + nAcr + ' + eutectic';
         line2 = 'Первичные: ' + ph.fPrimaryA.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '%';
         line3 = compoundActive
           ? 'Всего A: ' + ph.fSolidA.toFixed(1) + '% • ' + F + ': ' + ph.fSolidAB.toFixed(1) + '%'
-          : 'Всего фазы A (' + sA + '): ' + ph.fSolidA.toFixed(1) + '% • фазы B (' + sB + '): ' + ph.fSolidB.toFixed(1) + '%';
+          : 'Всего фазы ' + nAcr + ': ' + ph.fSolidA.toFixed(1) + '% • фазы ' + nBcr + ': ' + ph.fSolidB.toFixed(1) + '%';
         c = COL.A_DARK;
       } else {
-        line1 = compoundActive ? 'Первичные B + эвтектика (' + ph.eutecticType + ') / Primary B + eutectic'
-                              : 'Первичные B + эвтектика / Primary B + eutectic';
+        line1 = compoundActive ? 'Первичные ' + nBcr + ' + эвтектика (' + ph.eutecticType + ') / Primary ' + nBcr + ' + eutectic'
+                              : 'Первичные ' + nBcr + ' + эвтектика / Primary ' + nBcr + ' + eutectic';
         line2 = 'Первичные: ' + ph.fPrimaryB.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '%';
         line3 = compoundActive
           ? 'Всего B: ' + ph.fSolidB.toFixed(1) + '% • ' + F + ': ' + ph.fSolidAB.toFixed(1) + '%'
-          : 'Всего фазы B (' + sB + '): ' + ph.fSolidB.toFixed(1) + '% • фазы A (' + sA + '): ' + ph.fSolidA.toFixed(1) + '%';
+          : 'Всего фазы ' + nBcr + ': ' + ph.fSolidB.toFixed(1) + '% • фазы ' + nAcr + ': ' + ph.fSolidA.toFixed(1) + '%';
         c = COL.B_DARK;
       }
       break;
@@ -2293,12 +3948,30 @@ const diagramSketch = (p) => {
   p.setup = () => {
     p.createCanvas(DIAG_W, DIAG_H);
     p.noLoop();                       // перерисовка только по redraw() / redraw only on demand
+    /* v4.2: двойной клик по подписи возвращает её на место /
+     * v4.2: double click restores a dragged label */
+    p.canvas.addEventListener('dblclick', (ev) => labelDblClick(ev, p, 'diag'));
   };
   p.draw = () => drawPhaseDiagram(p);
-  p.mousePressed = () => handleDiagramPick(p);
-  p.mouseDragged = () => handleDiagramPick(p);
-  /* v3.0: тултип вертикальной линии соединения / v3.0: compound vertical line tooltip */
-  p.mouseMoved = () => handleCompoundTooltip(p);
+  /* v4.2: нажатие на подпись начинает её перетаскивание; нажатие на поле
+   * задаёт точку, как раньше / pressing a label starts dragging it; pressing
+   * the plot picks the point as before */
+  p.mousePressed = () => {
+    const inside = p.mouseX >= 0 && p.mouseX <= p.width && p.mouseY >= 0 && p.mouseY <= p.height;
+    if (inside) {
+      const hit = labelHitAt('diag', p.mouseX, p.mouseY);
+      if (hit) { startLabelDrag('diag', hit, p.mouseX, p.mouseY); return; }
+    }
+    handleDiagramPick(p);
+  };
+  p.mouseDragged = () => {
+    if (LBL_DRAG.active) { moveLabelDrag(p.mouseX, p.mouseY); return; }
+    handleDiagramPick(p);
+  };
+  p.mouseReleased = () => endLabelDrag();
+  /* v3.0: тултип вертикальной линии соединения; v4.2: курсор над подписями /
+   * v3.0: compound vertical line tooltip; v4.2: hand cursor over labels */
+  p.mouseMoved = () => { handleCompoundTooltip(p); updateLabelCursor(p, 'diag'); };
 };
 
 /* Скоут микроструктуры / Microstructure sketch */
@@ -2346,6 +4019,16 @@ function toggleCooling() {
 const compoundAnim = { active: false, raf: null, t0: 0, from: 0, to: 1, dur: AB_ANIM_MS };
 
 function startCompoundAnim(targetOn) {
+  /* v4.1: при активном полиморфизме диаграмма рисуется статическим путём —
+   * морфинг не выполняется, режим переключается мгновенно /
+   * v4.1: with polymorphism active the diagram uses the static render path —
+   * the morphing is skipped and the mode switches instantly */
+  if (state.showPolyA || state.showPolyB) {
+    compT = targetOn ? 1 : 0;
+    if (!targetOn) { state.showCompound = false; el['in-showAB'].checked = false; }
+    recomputeAll();
+    return;
+  }
   if (compoundAnim.raf) cancelAnimationFrame(compoundAnim.raf);
   compoundAnim.active = true;
   compoundAnim.from = compT;
@@ -2419,15 +4102,22 @@ function handleCompoundTooltip(p) {
  */
 function buildShareHash() {
   const q = new URLSearchParams();
-  q.set('v', '3');
+  q.set('v', '4');
   q.set('ta', state.TmA_C); q.set('ha', state.dH_A);
   q.set('tb', state.TmB_C); q.set('hb', state.dH_B);
   q.set('x', state.xB); q.set('T', state.T_C);
   q.set('c', state.showCompound ? '1' : '0');
   q.set('m', state.m); q.set('n', state.n);
   q.set('tab', state.TmAB_C); q.set('hab', state.dH_AB);
+  /* v4.1: полиморфизм и ДТА / v4.1: polymorphism and DTA */
+  q.set('pa', state.showPolyA ? '1' : '0'); q.set('qa', state.TpolyA_C); q.set('hpa', state.dHpolyA);
+  q.set('pb', state.showPolyB ? '1' : '0'); q.set('qb', state.TpolyB_C); q.set('hpb', state.dHpolyB);
+  if (state.showDTA) q.set('dta', '1');
   if (state.nameA !== 'Компонент A') q.set('na', state.nameA);
   if (state.nameB !== 'Компонент B') q.set('nb', state.nameB);
+  /* v4.2: смещения перетаскиванных подписей / v4.2: dragged label offsets */
+  const loKeys = Object.keys(state.labelOffsets);
+  if (loKeys.length) q.set('lo', JSON.stringify(state.labelOffsets));
   return '#' + q.toString();
 }
 
@@ -2461,8 +4151,28 @@ function applyShareHash() {
   state.m = num('m', state.m);
   state.n = num('n', state.n);
   state.showCompound = q.get('c') === '1';
+  /* v4.1: полиморфизм и ДТА / v4.1: polymorphism and DTA */
+  state.showPolyA = q.get('pa') === '1';
+  state.TpolyA_C = num('qa', state.TpolyA_C);
+  state.dHpolyA = num('hpa', state.dHpolyA);
+  state.showPolyB = q.get('pb') === '1';
+  state.TpolyB_C = num('qb', state.TpolyB_C);
+  state.dHpolyB = num('hpb', state.dHpolyB);
+  state.showDTA = q.get('dta') === '1';
   if (q.get('na')) state.nameA = q.get('na');
   if (q.get('nb')) state.nameB = q.get('nb');
+  /* v4.2: смещения подписей из ссылки / v4.2: label offsets from the link */
+  if (q.get('lo')) {
+    try {
+      const lo = JSON.parse(q.get('lo'));
+      Object.keys(lo).forEach(k => {
+        const o = lo[k];
+        if (o && isFinite(o.dx) && isFinite(o.dy)) {
+          state.labelOffsets[k] = { dx: clamp(Math.round(o.dx), -400, 400), dy: clamp(Math.round(o.dy), -400, 400) };
+        }
+      });
+    } catch (e) { /* некорректный параметр lo — игнорируем / malformed lo — ignored */ }
+  }
   /* Записать восстановленные значения в поля ввода / Write restored values into the inputs */
   el['in-tmA'].value = String(state.TmA_C); el['in-dhA'].value = String(state.dH_A);
   el['in-tmB'].value = String(state.TmB_C); el['in-dhB'].value = String(state.dH_B);
@@ -2471,6 +4181,15 @@ function applyShareHash() {
   el['in-showAB'].checked = state.showCompound;
   el['in-nameA'].value = state.nameA; el['in-nameB'].value = state.nameB;
   el['in-x'].value = String(state.xB); el['in-T'].value = String(state.T_C);   // слайдеры тоже / sliders too
+  /* v4.1 / v4.1 */
+  el['in-polyA'].checked = state.showPolyA; el['in-polyB'].checked = state.showPolyB;
+  el['in-tPolyA'].value = String(state.TpolyA_C); el['in-dhPolyA'].value = String(state.dHpolyA);
+  el['in-tPolyB'].value = String(state.TpolyB_C); el['in-dhPolyB'].value = String(state.dHpolyB);
+  if (state.showDTA) {
+    el['dta-panel'].hidden = false;
+    el['btn-dta'].hidden = true;
+    el['btn-dta-hide'].hidden = false;
+  }
   compT = state.showCompound ? 1 : 0;   // без анимации при загрузке / no animation on load
 }
 
@@ -2484,6 +4203,79 @@ function showToast(msg) {
   toastTimer = setTimeout(() => { t.style.display = 'none'; }, 1800);
 }
 
+/* ============================================================================
+ * v4.1: ПРЕСЕТЫ РЕАЛЬНЫХ СИСТЕМ (ТЗ 9.4) И ПАНЕЛЬ ДТА
+ * v4.1: REAL-SYSTEM PRESETS (SPEC 9.4) AND THE DTA PANEL
+ * Значения пресетов — приближённые учебные параметризации реальных систем.
+ * The preset values are approximate teaching parameterizations of real systems.
+ * ========================================================================== */
+const PRESETS = {
+  /* Олово–Свинец: β→α олова при 13 °C (ниже эвтектики — твёрдотельный переход) /
+   * Tin–Lead: β→α of tin at 13 °C (below the eutectic — a solid-state transition) */
+  sn_pb: { nameA: 'Олово', nameB: 'Свинец', TmA_C: 232, dH_A: 7000, TmB_C: 327, dH_B: 4800,
+           showPolyA: true, TpolyA_C: 13, dHpolyA: 900, showPolyB: false, TpolyB_C: 250, dHpolyB: 4000,
+           showCompound: false, m: 1, n: 1, TmAB_C: 500, dH_AB: 20000, xB: 40, T_C: 150,
+           note: 'Олово–Свинец: β→α олова при 13 °C (приближённые параметры / approximate parameters)' },
+  /* Железо–Медь: α→γ железа при 912 °C — перитектика выше эвтектики /
+   * Iron–Copper: α→γ of iron at 912 °C — the peritectic is above the eutectic */
+  fe_cu: { nameA: 'Железо', nameB: 'Медь', TmA_C: 1538, dH_A: 13800, TmB_C: 1085, dH_B: 13000,
+           showPolyA: true, TpolyA_C: 912, dHpolyA: 1200, showPolyB: false, TpolyB_C: 250, dHpolyB: 4000,
+           showCompound: false, m: 1, n: 1, TmAB_C: 500, dH_AB: 20000, xB: 30, T_C: 1000,
+           note: 'Железо–Медь: перитектика α→γ железа при 912 °C (приближённые параметры / approximate parameters)' },
+  /* Кофеин + Глутаровая кислота: стехиометрический сокристалл (кофеин:к-та = 2:1) /
+   * Caffeine + glutaric acid: a stoichiometric cocrystal (caffeine:acid = 2:1) */
+  caffeine: { nameA: 'Кофеин', nameB: 'Глутаровая к-та', TmA_C: 235, dH_A: 21000, TmB_C: 98, dH_B: 15000,
+           showPolyA: false, TpolyA_C: 300, dHpolyA: 5000, showPolyB: false, TpolyB_C: 250, dHpolyB: 4000,
+           showCompound: true, m: 2, n: 1, TmAB_C: 300, dH_AB: 30000, xB: 33.5, T_C: 150,
+           note: 'Кофеин–глутаровая к-та: сокристалл (учебная параметризация / teaching parameterization)' },
+  /* Пример 3 ТЗ: оба полиморфизма + соединение / Spec example 3: both polymorphisms + compound */
+  full: { nameA: 'Компонент A', nameB: 'Компонент B', TmA_C: 450, dH_A: 15000, TmB_C: 350, dH_B: 12000,
+           showPolyA: true, TpolyA_C: 300, dHpolyA: 5000, showPolyB: true, TpolyB_C: 250, dHpolyB: 4000,
+           showCompound: true, m: 2, n: 1, TmAB_C: 500, dH_AB: 20000, xB: 30, T_C: 400,
+           note: 'Оба полиморфизма + соединение A₂B (пример 3 ТЗ / spec example 3)' },
+  /* Сброс к базовой эвтектике v2.1 / Reset to the basic v2.1 eutectic */
+  reset: { nameA: 'Компонент A', nameB: 'Компонент B', TmA_C: 450, dH_A: 15000, TmB_C: 350, dH_B: 12000,
+           showPolyA: false, TpolyA_C: 300, dHpolyA: 5000, showPolyB: false, TpolyB_C: 250, dHpolyB: 4000,
+           showCompound: false, m: 1, n: 1, TmAB_C: 500, dH_AB: 20000, xB: 50, T_C: 400, note: null },
+};
+
+/* Применение пресета: запись параметров в state и поля ввода / Apply a preset: write parameters into state and inputs */
+function applyPreset(key) {
+  const pr = PRESETS[key];
+  if (!pr) return;
+  finishCompoundAnim();
+  ['nameA', 'nameB', 'TmA_C', 'dH_A', 'TmB_C', 'dH_B', 'TpolyA_C', 'dHpolyA', 'TpolyB_C', 'dHpolyB',
+   'TmAB_C', 'dH_AB', 'm', 'n', 'xB', 'T_C'].forEach(k => { if (pr[k] !== undefined) state[k] = pr[k]; });
+  state.showPolyA = !!pr.showPolyA;
+  state.showPolyB = !!pr.showPolyB;
+  state.showCompound = !!pr.showCompound;
+  if (key === 'reset') { state.labelOffsets = {}; updateResetLabelsBtn(); }   // пресет «Сброс» убирает и смещения подписей / the reset preset clears label offsets too
+  compT = state.showCompound ? 1 : 0;               // без морфинга при пресете / no morphing for presets
+  el['in-nameA'].value = state.nameA; el['in-nameB'].value = state.nameB;
+  el['in-tmA'].value = String(state.TmA_C); el['in-dhA'].value = String(state.dH_A);
+  el['in-tmB'].value = String(state.TmB_C); el['in-dhB'].value = String(state.dH_B);
+  el['in-tPolyA'].value = String(state.TpolyA_C); el['in-dhPolyA'].value = String(state.dHpolyA);
+  el['in-tPolyB'].value = String(state.TpolyB_C); el['in-dhPolyB'].value = String(state.dHpolyB);
+  el['in-m'].value = String(state.m); el['in-n'].value = String(state.n);
+  el['in-tmAB'].value = String(state.TmAB_C); el['in-dhAB'].value = String(state.dH_AB);
+  el['in-polyA'].checked = state.showPolyA; el['in-polyB'].checked = state.showPolyB;
+  el['in-showAB'].checked = state.showCompound;
+  recomputeAll();
+  if (pr.note) showToast(pr.note);
+}
+
+/* Показ/скрытие панели ДТА (ТЗ 3.2): данные генерируются в recompute() /
+ * Show/hide the DTA panel (spec 3.2): the data is generated in recompute() */
+let dtaP = null;                                    // p5-инстанс ДТА / DTA p5 instance
+function setDTAVisible(on) {
+  state.showDTA = on;
+  el['dta-panel'].hidden = !on;
+  el['btn-dta'].hidden = on;
+  el['btn-dta-hide'].hidden = !on;
+  if (on && !dtaP) dtaP = new p5(dtaSketch, 'dta-container');
+  recomputeAll();
+}
+
 /* Инициализация / Initialization */
 function init() {
   cacheElements();
@@ -2492,7 +4284,8 @@ function init() {
   /* Все поля ввода обновляют модель в реальном времени /
    * All inputs update the model in real time */
   ['in-nameA', 'in-nameB', 'in-tmA', 'in-tmB', 'in-dhA', 'in-dhB', 'in-x', 'in-T',
-   'in-m', 'in-n', 'in-tmAB', 'in-dhAB']
+   'in-m', 'in-n', 'in-tmAB', 'in-dhAB',
+   'in-tPolyA', 'in-dhPolyA', 'in-tPolyB', 'in-dhPolyB']
     .forEach(id => el[id].addEventListener('input', onControlInput));
 
   /* Числовые поля: при завершении ввода (blur/Enter) — нормализация и запись
@@ -2507,6 +4300,9 @@ function init() {
   el['btn-cool'].addEventListener('click', toggleCooling);
   el['btn-save-diag'].addEventListener('click', () => diagP.saveCanvas('phase_diagram', 'png'));
   el['btn-save-micro'].addEventListener('click', () => microP.saveCanvas('microstructure', 'png'));
+  /* v4.2: сброс перетаскиванных подписей / v4.2: reset dragged labels */
+  el['btn-reset-labels'].addEventListener('click', resetAllLabels);
+  updateResetLabelsBtn();           // смещения могли приехать из share-ссылки / offsets may come from the share link
   /* v3.0: чекбокс запускает анимацию "вырастания" горба. Модель соединения
    * должна существовать во время ОБЕИХ анимаций, поэтому showCompound
    * принудительно true; выключение происходит в конце обратной анимации /
@@ -2521,6 +4317,16 @@ function init() {
     startCompoundAnim(targetOn);
   });
   el['btn-share'].addEventListener('click', shareState);
+  /* v4.1: полиморфизм, ДТА и пресеты / v4.1: polymorphism, DTA and presets */
+  el['in-polyA'].addEventListener('change', onControlInput);
+  el['in-polyB'].addEventListener('change', onControlInput);
+  el['btn-dta'].addEventListener('click', () => setDTAVisible(true));
+  el['btn-dta-hide'].addEventListener('click', () => setDTAVisible(false));
+  el['btn-dta-csv'].addEventListener('click', exportDTACsv);
+  el['in-preset'].addEventListener('change', () => {
+    const v = el['in-preset'].value;
+    if (v) { applyPreset(v); el['in-preset'].value = ''; }   // сброс выбора / reset the selection
+  });
 
   /* Первый расчёт и запуск скоутов / First computation and sketch launch */
   readControls();
@@ -2539,6 +4345,27 @@ window.APP = { state: state, model: () => model, recomputeAll: recomputeAll,
   calculateEutectic2: calculateEutectic2, liquidusTempAB_left: liquidusTempAB_left,
   liquidusTempAB_right: liquidusTempAB_right, liquidusTempA_sub1: liquidusTempA_sub1,
   liquidusTempB_sub2: liquidusTempB_sub2, getFormulaString: getFormulaString,
+  /* v4.1 / v4.1 */
+  polyK: polyK, calculatePeritecticA: calculatePeritecticA, calculatePeritecticB: calculatePeritecticB,
+  liquidusTempAlphaA: liquidusTempAlphaA, liquidusTempAlphaB: liquidusTempAlphaB,
+  liquidusTempBetaA: liquidusTempBetaA, liquidusTempBetaB: liquidusTempBetaB,
+  liquidusTempBetaA_sub1: liquidusTempBetaA_sub1, liquidusTempBetaB_sub2: liquidusTempBetaB_sub2,
+  liquidusTempA_eff: liquidusTempA_eff, liquidusTempB_eff: liquidusTempB_eff,
+  liquidCompositionA_eff: liquidCompositionA_eff, liquidCompositionB_eff: liquidCompositionB_eff,
+  getPhaseName: getPhaseName, formatPolymorphName: formatPolymorphName,
+  generateDTACurve: generateDTACurve, computePhase: computePhase, checkBalance: checkBalance,
+  applyPreset: applyPreset, polyAnim: polyAnim,
+  /* v4.2: отладочный доступ к реестру подписей / v4.2: debug access to the label registry */
+  LBL_BOXES: LBL_BOXES, LBL_DRAG: LBL_DRAG,
+  setPoly: function (showA, tpolyA, dhpolyA, showB, tpolyB, dhpolyB) {
+    if (showA !== undefined) { state.showPolyA = !!showA; el['in-polyA'].checked = !!showA; }
+    if (tpolyA !== undefined) { state.TpolyA_C = tpolyA; el['in-tPolyA'].value = String(tpolyA); }
+    if (dhpolyA !== undefined) { state.dHpolyA = dhpolyA; el['in-dhPolyA'].value = String(dhpolyA); }
+    if (showB !== undefined) { state.showPolyB = !!showB; el['in-polyB'].checked = !!showB; }
+    if (tpolyB !== undefined) { state.TpolyB_C = tpolyB; el['in-tPolyB'].value = String(tpolyB); }
+    if (dhpolyB !== undefined) { state.dHpolyB = dhpolyB; el['in-dhPolyB'].value = String(dhpolyB); }
+    recomputeAll();
+  },
   setCompound: function (show, m, n, TmAB, dHAB) {
     if (m !== undefined) { state.m = m; el['in-m'].value = String(m); }
     if (n !== undefined) { state.n = n; el['in-n'].value = String(n); }
