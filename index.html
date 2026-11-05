@@ -33,6 +33,21 @@
     background: #fff3cd; border: 1px solid #e6d28a; color: #7a5c00;
     border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 13px;
   }
+  /* ===== v3.0: секция соединения, тултип, тост / v3.0: compound section, tooltip, toast ===== */
+  fieldset.compound-section { background: #fff8ee; border-color: #e0b26a; }
+  fieldset.compound-section legend { color: #8a5a00; }
+  fieldset.compound-section:disabled input[type=number] { opacity: .55; }
+  #tooltip {
+    position: absolute; display: none; pointer-events: none; z-index: 20;
+    background: rgba(38, 49, 62, .93); color: #fff; padding: 6px 9px;
+    border-radius: 6px; font-size: 12px; line-height: 1.4; white-space: nowrap;
+  }
+  #toast {
+    position: fixed; top: 16px; right: 16px; z-index: 50; display: none;
+    background: #1c7c2e; color: #fff; padding: 9px 14px; border-radius: 8px;
+    font-size: 13px; box-shadow: 0 2px 10px rgba(0,0,0,.25);
+  }
+  #diagram-container { position: relative; }
   /* ===== Панель управления / Controls panel ===== */
   .controls-grid { display: flex; flex-wrap: wrap; gap: 14px; }
   .controls-grid fieldset {
@@ -70,33 +85,45 @@
     <p class="note">
       Модель: идеальная простая эвтектика с <b>нулевой взаимной растворимостью в твёрдом состоянии</b>
       (кристаллизуются чистые компоненты A и B). Линии ликвидуса рассчитываются по уравнению
-      Шредера–ван Лаара. / Model: ideal simple eutectic with <b>zero mutual solid solubility</b>
+      Шредера–ван Лаара. В версии 3.0 добавлено <b>конгруэнтно плавящееся стехиометрическое соединение
+      A<sub>m</sub>B<sub>n</sub></b>: система распадается на две подсистемы (A–A<sub>m</sub>B<sub>n</sub>
+      и A<sub>m</sub>B<sub>n</sub>–B) с двумя эвтектиками.
+      / Model: ideal simple eutectic with <b>zero mutual solid solubility</b>
       (pure A and B crystallize); liquidus lines are computed with the Schröder–van Laar equation.
+      Version 3.0 adds a <b>congruently melting stoichiometric compound A<sub>m</sub>B<sub>n</sub></b>:
+      the system splits into two subsystems (A–A<sub>m</sub>B<sub>n</sub> and
+      A<sub>m</sub>B<sub>n</sub>–B) with two eutectic points.
     </p>
   </header>
 
   <div id="warning" class="warning" hidden></div>
+  <div id="toast"></div>
 
   <main>
     <!-- Левая панель: фазовая диаграмма / Left panel: phase diagram -->
     <section class="panel" id="panel-left">
       <h2>Фазовая диаграмма / Phase diagram</h2>
       <div id="diagram-container"></div>
+      <div id="tooltip"></div>
       <div class="legend">
         <span><span class="chip" style="background:#9370DB"></span>Кристаллы / фаза A (purple)</span>
         <span><span class="chip" style="background:#32CD32"></span>Кристаллы / фаза B (green)</span>
+        <span id="legend-ab" hidden><span class="chip" style="background:#FFA500"></span>Соединение / compound <b id="legend-ab-formula">AB</b> (orange)</span>
         <span><span class="chip" style="background:#ffb8c6"></span>Жидкость / Liquid</span>
-        <span><span class="chip" style="background:#cfd2d6"></span>Твёрдое A+B / Solid A+B</span>
+        <span><span class="chip" style="background:#cfd2d6" id="legend-solid-chip"></span><span id="legend-solid">Твёрдое A+B / Solid A+B</span></span>
       </div>
       <p class="footnote">
-        Толстые линии — ликвидусы (фиолетовый — ветвь A, зелёный — ветвь B), тёмная горизонталь — солидус (эвтектическая линия).
+        Толстые линии — ликвидусы (фиолетовый — ветвь A, зелёный — ветвь B, оранжевый — ветви соединения),
+        тёмные горизонтали — солидусы (эвтектические линии).
+        <!-- v3.0: в режиме соединения добавляется вертикальная линия стехиометрического соединения и вторая эвтектика; кристаллы соединения — оранжевые шестиугольники. / v3.0: compound mode adds the vertical stoichiometric line and a second eutectic; compound crystals are orange hexagons. -->
         Продолжения ликвидусов ниже эвтектической точки (метастабильные области) не отображаются.
         Ось Y динамическая: верх шкалы = максимальная температура плавления + 10 °C, низ — чуть ниже солидуса; если выбранная точка выходит за шкалу, диаграмма автоматически растягивается.
-        Кликните или потяните мышью по полю диаграммы, чтобы задать состав и температуру.
-        / Thick lines are liquidus branches (purple — A, green — B), the dark horizontal line is the solidus.
+        Кликните или потяните мышью по полю диаграммы, чтобы задать состав и температуру; наведите курсор на вертикальную линию соединения для подсказки.
+        / Thick lines are liquidus branches (purple — A, green — B, orange — the compound branches), dark horizontals are the solidus lines.
+        In compound mode a vertical stoichiometric line and a second eutectic appear; compound crystals are orange hexagons.
         Metastable liquidus extensions below the eutectic point are not drawn.
         The Y axis is dynamic: the top of the scale is the highest melting point + 10 °C, the bottom is just below the solidus; the diagram stretches automatically when the selected point leaves the scale.
-        Click or drag on the plot to pick composition and temperature.
+        Click or drag on the plot to pick composition and temperature; hover over the compound vertical line for a tooltip.
       </p>
     </section>
 
@@ -111,6 +138,25 @@
   <section class="panel" id="controls-panel">
     <h2>Управление / Controls</h2>
     <div class="controls-grid">
+      <fieldset class="compound-section">
+        <legend>Соединение A<sub>m</sub>B<sub>n</sub> / Compound A<sub>m</sub>B<sub>n</sub></legend>
+        <label style="font-weight:600">Показать соединение / Show compound
+          <input type="checkbox" id="in-showAB" style="margin-left:6px; transform:scale(1.3); accent-color:#D2691E">
+        </label>
+        <label>Стехиометрия m (Aₘ) / stoichiometry m (1…5)
+          <input type="number" id="in-m" min="1" max="5" step="1" value="1">
+        </label>
+        <label>Стехиометрия n (Bₙ) / stoichiometry n (1…5)
+          <input type="number" id="in-n" min="1" max="5" step="1" value="1">
+        </label>
+        <label>Температура плавления соединения / Compound melting point, °C (−100…3000)
+          <input type="number" id="in-tmAB" min="-100" max="3000" step="1" value="500">
+        </label>
+        <label>Энтальпия плавления соединения / Compound enthalpy, Дж/моль (1…100000)
+          <input type="number" id="in-dhAB" min="1" max="100000" step="1" value="20000">
+        </label>
+        <p class="hint" id="ab-formula">Формула: AB • x = 50.0% B</p>
+      </fieldset>
       <fieldset>
         <legend>Названия компонентов / Component names</legend>
         <label>Компонент A / Component A
@@ -147,6 +193,7 @@
           <button id="btn-cool" title="Анимация охлаждения от текущей T до -100 °C / Cool-down animation">▼ Охлаждение / Cool</button>
           <button id="btn-save-diag">📷 Диаграмма PNG</button>
           <button id="btn-save-micro">📷 Микроструктура PNG</button>
+          <button id="btn-share" title="Кодирует все параметры в URL / Encodes all parameters into the URL">🔗 Поделиться / Share</button>
         </div>
         <p class="hint">Клик по диаграмме = выбор состава и температуры / Click on the diagram to set composition and temperature</p>
       </fieldset>
@@ -158,11 +205,16 @@
     <h2>Текущее состояние системы / Current system state</h2>
     <div class="info-grid">
       <div class="info-item"><span class="k">Фазовое состояние / Phase state</span><span class="v" id="i-state">—</span></div>
+      <div class="info-item"><span class="k">Подсистема / Subsystem</span><span class="v" id="i-sub">—</span></div>
       <div class="info-item"><span class="k">Доля твёрдой фазы A / Solid A fraction</span><span class="v" id="i-fsa">—</span></div>
       <div class="info-item"><span class="k">Доля твёрдой фазы B / Solid B fraction</span><span class="v" id="i-fsb">—</span></div>
+      <div class="info-item"><span class="k">Доля твёрдого соединения / Solid compound fraction</span><span class="v" id="i-fsab">—</span></div>
       <div class="info-item"><span class="k">Доля жидкости / Liquid fraction</span><span class="v" id="i-fl">—</span></div>
       <div class="info-item"><span class="k">Состав жидкости, % B / Liquid composition, % B</span><span class="v" id="i-xl">—</span></div>
       <div class="info-item"><span class="k">Температура ликвидуса (данный состав) / Liquidus T (this composition)</span><span class="v" id="i-tl">—</span></div>
+      <div class="info-item"><span class="k">Соединение A_mB_n / Compound A_mB_n</span><span class="v" id="i-comp">—</span></div>
+      <div class="info-item"><span class="k">Эвтектика E1 (A–соединение) / Eutectic E1</span><span class="v" id="i-e1">—</span></div>
+      <div class="info-item"><span class="k">Эвтектика E2 (соединение–B) / Eutectic E2</span><span class="v" id="i-e2">—</span></div>
       <div class="info-item"><span class="k">Эвтектическая температура / Eutectic temperature</span><span class="v" id="i-te">—</span></div>
       <div class="info-item"><span class="k">Состав эвтектики, % B / Eutectic composition, % B</span><span class="v" id="i-xe">—</span></div>
       <div class="info-item"><span class="k">Микроструктура (твёрдое состояние) / Microstructure (solid)</span><span class="v" id="i-struct">—</span></div>
@@ -193,6 +245,10 @@ const TOP_MARGIN_C = 10;          // Запас над самой высокой
 const DH_MIN = 1;                 // Минимальная энтальпия / Minimum enthalpy, Дж/моль
 const DH_MAX = 100000;            // Максимальная энтальпия / Maximum enthalpy, Дж/моль
 const EUT_TOL = 0.05;             // Порог "состав = эвтектика", % / Threshold "composition = eutectic", %
+const COMPOUND_TOL = 0.35;        // Порог "состав = стехиометрия соединения", % / "composition = compound stoichiometry" threshold, %
+const MN_MIN = 1, MN_MAX = 5;     // Допустимая стехиометрия / Allowed stoichiometry range
+const AB_ANIM_MS = 700;           // Длительность анимации "вырастания" горба / Hump growth animation duration, ms
+const AB_ANIM_OUT_MS = 380;       // Длительность обратной анимации / Reverse animation duration, ms
 
 /* Цвета: A — фиолетовый, B — зелёный (везде и всегда!)
  * Colors: A — purple, B — green (everywhere and always!) */
@@ -201,10 +257,14 @@ const COL = {
   A_DARK: [96, 70, 160],          // тёмно-фиолетовый / darker purple
   B: [50, 205, 50],               // #32CD32 зелёный / green
   B_DARK: [30, 130, 30],          // тёмно-зелёный / darker green
+  AB: [255, 165, 0],              // #FFA500 оранжевый — соединение / orange — compound
+  AB_DARK: [176, 88, 0],          // тёмно-оранжевый (кристаллы) / dark orange (crystals)
+  AB_LINE: [210, 105, 30],        // #D2691E линия соединения / compound line color
   LIQUID: [255, 183, 197],        // светло-розовый / light pink
   LIQUID_ALPHA: 105,              // прозрачность жидкости / liquid alpha
   ZONE_LA: [147, 112, 219, 48],   // зона L+A / L+A zone
   ZONE_LB: [50, 205, 50, 42],     // зона L+B / L+B zone
+  ZONE_LAB: [255, 165, 0, 40],    // зона L+AB / L+AB zone (v3.0)
   ZONE_SOLID: [206, 209, 214, 150], // зона A+B / solid zone
   POINT: [226, 32, 32],           // интерактивная точка / interactive point
 };
@@ -219,7 +279,18 @@ const state = {
   dH_B: 12000,                    // Энтальпия плавления B / Enthalpy of fusion B, Дж/моль
   xB: 50,                         // Состав сплава (мол.% B) / Alloy composition (mol.% B)
   T_C: 400,                       // Температура / Temperature, °C (внутри динамической шкалы / inside the dynamic scale)
+  /* --- v3.0: соединение A_mB_n / v3.0: compound A_mB_n --- */
+  showCompound: false,            // Чекбокс "Показать соединение" / "Show compound" checkbox
+  m: 1,                           // Стехиометрия по A / A stoichiometry
+  n: 1,                           // Стехиометрия по B / B stoichiometry
+  TmAB_C: 500,                    // Температура плавления соединения / Compound melting point, °C
+  dH_AB: 20000,                   // Энтальпия плавления соединения / Compound enthalpy of fusion, Дж/моль
 };
+
+/* Предупреждения от модели (нестабильное соединение и т.п.) /
+ * Warnings produced by the model (unstable compound etc.) */
+let inputWarnings = [];
+let modelWarnings = [];
 
 /* Пересчитанная модель (обновляется функцией recompute()) /
  * Derived model (updated by recompute()) */
@@ -324,6 +395,315 @@ function calculateEutectic() {
   return { xFrac: x, xPct: x * 100, T_K: T_K, T_C: k2c(T_K), degenerate: null };
 }
 
+/* ============================================================================
+ * v3.0: СОЕДИНЕНИЕ A_mB_n — ДВЕ ПОДСИСТЕМЫ
+ * v3.0: COMPOUND A_mB_n — TWO SUBSYSTEMS
+ *
+ * Конгруэнтно плавящееся стехиометрическое соединение A_mB_n делит исходную
+ * систему A–B на две независимые подсистемы: A–A_mB_n (0…x_AB) и
+ * A_mB_n–B (x_AB…100). Уравнение Шредера–ван Лаара применяется к каждой
+ * подсистеме отдельно, с "эффективными" мольными долями.
+ * A congruently melting stoichiometric compound A_mB_n splits the A–B system
+ * into two independent subsystems: A–A_mB_n (0…x_AB) and A_mB_n–B (x_AB…100).
+ * The Schröder–van Laar equation is applied to each subsystem separately,
+ * using "effective" mole fractions.
+ * ========================================================================== */
+
+/*
+ * Низкоуровневый ликвидус по эффективной доле кристаллизующейся фазы.
+ * Low-level liquidus for the effective fraction of the crystallizing phase.
+ * 1/T = 1/T_m - (R/dH) * ln(x_eff)
+ */
+function _liquidusT_generic(xEff, Tm_K, dH) {
+  if (xEff >= 1) return Tm_K;                // чистая фаза / pure phase
+  if (xEff <= 0) return 0;                   // предел x_eff→0: T→0 K / limit (unused)
+  return 1 / (1 / Tm_K - (R_GAS / dH) * Math.log(xEff));
+}
+
+/*
+ * Строка формулы соединения: A1B1 → "AB", A2B1 → "A₂B", A1B3 → "AB₃".
+ * Compound formula string: A1B1 → "AB", A2B1 → "A₂B", A1B3 → "AB₃".
+ * Индекс 1 опускается; стехиометрия сокращается по НОД (A₂B₂ → AB),
+ * как в химической нотации / index 1 omitted; indices reduced by GCD
+ * (A₂B₂ → AB), as in chemical notation.
+ */
+function getFormulaString(m, n) {
+  const SUB = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉'];
+  const gcd = (a, b) => b ? gcd(b, a % b) : a;
+  const g = gcd(Math.max(m, 1), Math.max(n, 1));
+  const mR = m / g, nR = n / g;
+  const sub = k => (k === 1 ? '' : String(k).split('').map(d => SUB[+d]).join(''));
+  return 'A' + sub(mR) + 'B' + sub(nR);
+}
+
+/* Ветвь ликвидуса A в подсистеме 1 (x_A^eff = (x_AB − x_B)/x_AB) /
+ * Liquidus branch of A in subsystem 1 (x_A^eff = (x_AB − x_B)/x_AB)
+ * ВНИМАНИЕ: передаётся доля A, поэтому нужен _liquidusT_generic
+ * (обёртка _liquidusT_A ждёт долю B — двойная инверсия недопустима) /
+ * NOTE: the A fraction is passed, so _liquidusT_generic is required
+ * (_liquidusT_A expects a B fraction — no double inversion) */
+function _liquidusT_A_sub1(xFrac, xABfrac, TmA_K, dH_A) {
+  return _liquidusT_generic((xABfrac - xFrac) / xABfrac, TmA_K, dH_A);
+}
+
+/* Левая ветвь ликвидуса соединения (x_AB^eff = x_B/x_AB) /
+ * Left liquidus branch of the compound (x_AB^eff = x_B/x_AB) */
+function _liquidusT_AB_left(xFrac, xABfrac, TmAB_K, dH_AB) {
+  return _liquidusT_generic(xFrac / xABfrac, TmAB_K, dH_AB);
+}
+
+/* Правая ветвь ликвидуса соединения (x_AB^eff = (100 − x_B)/(100 − x_AB)) /
+ * Right liquidus branch of the compound (x_AB^eff = (100 − x_B)/(100 − x_AB)) */
+function _liquidusT_AB_right(xFrac, xABfrac, TmAB_K, dH_AB) {
+  return _liquidusT_generic((1 - xFrac) / (1 - xABfrac), TmAB_K, dH_AB);
+}
+
+/* Ветвь ликвидуса B в подсистеме 2 (x_B^eff = (x_B − x_AB)/(100 − x_AB)) /
+ * Liquidus branch of B in subsystem 2 (x_B^eff = (x_B − x_AB)/(100 − x_AB)) */
+function _liquidusT_B_sub2(xFrac, xABfrac, TmB_K, dH_B) {
+  return _liquidusT_B((xFrac - xABfrac) / (1 - xABfrac), TmB_K, dH_B);
+}
+
+/* Публичные обёртки, использующие текущую модель (для рисования и фаз) /
+ * Public wrappers using the current model (for drawing and phase math) */
+
+// Температура ликвидуса соединения, левая ветвь / Compound liquidus T, left branch
+function liquidusTempAB_left(xB_frac) {
+  return _liquidusT_AB_left(xB_frac, model.compound.xABfrac, model.TmAB_K, state.dH_AB);
+}
+
+// Температура ликвидуса соединения, правая ветвь / Compound liquidus T, right branch
+function liquidusTempAB_right(xB_frac) {
+  return _liquidusT_AB_right(xB_frac, model.compound.xABfrac, model.TmAB_K, state.dH_AB);
+}
+
+// Температура ликвидуса A в подсистеме A–AB / Liquidus T of A in the A–AB subsystem
+function liquidusTempA_sub1(xB_frac) {
+  return _liquidusT_A_sub1(xB_frac, model.compound.xABfrac, model.TmA_K, state.dH_A);
+}
+
+// Температура ликвидуса B в подсистеме AB–B / Liquidus T of B in the AB–B subsystem
+function liquidusTempB_sub2(xB_frac) {
+  return _liquidusT_B_sub2(xB_frac, model.compound.xABfrac, model.TmB_K, state.dH_B);
+}
+
+/*
+ * Расчёт эвтектики в одной подсистеме делением отрезка пополам (≤200 итераций).
+ * Eutectic search inside one subsystem by bisection (≤200 iterations).
+ * side = 'left': подсистема A–AB, ищем T_A(x) = T_AB_left(x) на (0, x_AB);
+ * side = 'left': A–AB subsystem, solve T_A(x) = T_AB_left(x) on (0, x_AB);
+ * side = 'right': подсистема AB–B, ищем T_AB_right(x) = T_B(x) на (x_AB, 100).
+ * side = 'right': AB–B subsystem, solve T_AB_right(x) = T_B(x) on (x_AB, 100).
+ * Внутри подсистемы одна ветвь монотонно убывает, другая растёт → пересечение
+ * единственно. Крайние случаи (пересечения нет) прижимаются к границе.
+ * Inside a subsystem one branch decreases, the other grows → single crossing.
+ * Degenerate cases (no crossing) collapse to the boundary.
+ */
+function _calculateSubEutectic(xABfrac, side) {
+  const f = side === 'left'
+    ? x => _liquidusT_A_sub1(x, xABfrac, model.TmA_K, state.dH_A)
+         - _liquidusT_AB_left(x, xABfrac, model.TmAB_K, state.dH_AB)
+    : x => _liquidusT_AB_right(x, xABfrac, model.TmAB_K, state.dH_AB)
+         - _liquidusT_B_sub2(x, xABfrac, model.TmB_K, state.dH_B);
+  let lo = side === 'left' ? 1e-9 : xABfrac + 1e-9;
+  let hi = side === 'left' ? xABfrac - 1e-9 : 1 - 1e-9;
+  if (f(lo) <= 0) {
+    const T_K = side === 'left' ? _liquidusT_A_sub1(lo, xABfrac, model.TmA_K, state.dH_A)
+                                : _liquidusT_AB_right(lo, xABfrac, model.TmAB_K, state.dH_AB);
+    return { xFrac: lo, xPct: lo * 100, T_K: T_K, T_C: k2c(T_K), degenerate: 'lo' };
+  }
+  if (f(hi) >= 0) {
+    const T_K = side === 'left' ? _liquidusT_AB_left(hi, xABfrac, model.TmAB_K, state.dH_AB)
+                                : _liquidusT_B_sub2(hi, xABfrac, model.TmB_K, state.dH_B);
+    return { xFrac: hi, xPct: hi * 100, T_K: T_K, T_C: k2c(T_K), degenerate: 'hi' };
+  }
+  for (let i = 0; i < 200; i++) {
+    const mid = 0.5 * (lo + hi);
+    if (f(mid) > 0) lo = mid; else hi = mid;
+    if (hi - lo < 1e-13) break;
+  }
+  const x = 0.5 * (lo + hi);
+  const T_K = side === 'left' ? _liquidusT_A_sub1(x, xABfrac, model.TmA_K, state.dH_A)
+                              : _liquidusT_AB_right(x, xABfrac, model.TmAB_K, state.dH_AB);
+  return { xFrac: x, xPct: x * 100, T_K: T_K, T_C: k2c(T_K), degenerate: null };
+}
+
+/* Эвтектика E1 в подсистеме A–AB (по ТЗ 6.1) / Eutectic E1 in the A–AB subsystem (spec 6.1) */
+function calculateEutectic1() {
+  return _calculateSubEutectic(model.compound.xABfrac, 'left');
+}
+
+/* Эвтектика E2 в подсистеме AB–B (по ТЗ 6.1) / Eutectic E2 in the AB–B subsystem (spec 6.1) */
+function calculateEutectic2() {
+  return _calculateSubEutectic(model.compound.xABfrac, 'right');
+}
+
+/*
+ * Расчёт параметров обеих подсистем (calculateSubsystems по ТЗ 6.1).
+ * Compute both subsystems' parameters (calculateSubsystems per spec 6.1).
+ */
+function calculateSubsystems() {
+  const xABpct = 100 * state.n / (state.m + state.n);   // x_AB = n/(m+n)·100 / compound composition
+  const xABfrac = xABpct / 100;
+  /* Частичная модель нужна обёрткам до полного расчёта /
+   * A partial model is needed by the wrappers before full computation */
+  model.compound = {
+    xABpct: xABpct, xABfrac: xABfrac,
+    formula: getFormulaString(state.m, state.n),
+    e1: null, e2: null, unstable: false,
+  };
+  /* Две эвтектики / Two eutectic points */
+  model.compound.e1 = calculateEutectic1();
+  model.compound.e2 = calculateEutectic2();
+  /* Случай 1 по ТЗ: соединение "плавится ниже эвтектик" → неустойчиво /
+   * Spec case 1: the compound "melts below the eutectics" → unstable */
+  if (state.TmAB_C <= Math.max(model.compound.e1.T_C, model.compound.e2.T_C) + 0.5) {
+    model.compound.unstable = true;
+  }
+  return model.compound;
+}
+
+/*
+ * Фазовое состояние в режиме соединения: подсистемы A–AB и AB–B.
+ * Phase state in compound mode: A–AB and AB–B subsystems.
+ * Правило рычага применяется к той подсистеме, где лежит точка.
+ * The lever rule is applied to the subsystem containing the point.
+ */
+function computePhaseCompound(xBpct, T_C) {
+  const c = model.compound;
+  const x = clamp(xBpct, 0, 100);
+  const ph = {
+    x: x, T: T_C, kind: 'LIQUID',
+    pure: null, eutecticStructure: false, eutecticType: null, subsystem: null,
+    fSolidA: 0, fSolidB: 0, fSolidAB: 0, fLiquid: 100, xLiquid: null, Tliq_C: null,
+    fPrimaryA: 0, fPrimaryB: 0, fPrimaryAB: 0, fEutectic: 0, eutFrac2: 0,
+  };
+
+  /* Чистый компонент A (x = 0%) / Pure component A */
+  if (x <= 1e-4) {
+    ph.pure = 'A'; ph.subsystem = 'A–' + c.formula; ph.Tliq_C = state.TmA_C;
+    if (T_C > state.TmA_C) { ph.kind = 'LIQUID'; }
+    else { ph.kind = 'SOLID'; ph.fSolidA = 100; ph.fLiquid = 0; }
+    return ph;
+  }
+  /* Чистый компонент B (x = 100%) / Pure component B */
+  if (x >= 100 - 1e-4) {
+    ph.pure = 'B'; ph.subsystem = c.formula + '–B'; ph.Tliq_C = state.TmB_C;
+    if (T_C > state.TmB_C) { ph.kind = 'LIQUID'; }
+    else { ph.kind = 'SOLID'; ph.fSolidB = 100; ph.fLiquid = 0; }
+    return ph;
+  }
+  /* Состав = стехиометрия соединения: чистое соединение (без эвтектики!) /
+   * Composition = compound stoichiometry: pure compound (NO eutectic!) */
+  if (Math.abs(x - c.xABpct) < COMPOUND_TOL) {
+    ph.pure = 'AB';
+    ph.subsystem = c.formula; ph.Tliq_C = state.TmAB_C;
+    if (T_C > state.TmAB_C) { ph.kind = 'LIQUID'; }
+    else { ph.kind = 'SOLID'; ph.fSolidAB = 100; ph.fLiquid = 0; }
+    return ph;
+  }
+
+  const inSub1 = x < c.xABpct;                       // подсистема A–AB / A–AB subsystem
+  const e = inSub1 ? c.e1 : c.e2;                    // своя эвтектика / own eutectic
+  ph.subsystem = inSub1 ? 'A–' + c.formula : c.formula + '–B';
+  const nearEut = Math.abs(x - e.xPct) < EUT_TOL;
+
+  /* Температура ликвидуса в своей подсистеме / Liquidus T inside the own subsystem */
+  if (nearEut) {
+    ph.Tliq_C = e.T_C;
+  } else if (inSub1) {
+    ph.Tliq_C = k2c(x < e.xPct ? liquidusTempA_sub1(x / 100) : liquidusTempAB_left(x / 100));
+  } else {
+    ph.Tliq_C = k2c(x < e.xPct ? liquidusTempAB_right(x / 100) : liquidusTempB_sub2(x / 100));
+  }
+
+  /* Состав равен эвтектическому / Composition equals the eutectic */
+  if (nearEut) {
+    if (T_C > e.T_C) { ph.kind = 'LIQUID'; return ph; }
+    ph.kind = 'SOLID'; ph.eutecticStructure = true; ph.fLiquid = 0; ph.fEutectic = 100;
+    if (inSub1) {
+      ph.eutecticType = 'A+AB';
+      ph.fSolidAB = e.xPct / c.xABpct * 100;         // доля AB в эвтектике / AB share in eutectic
+      ph.fSolidA = 100 - ph.fSolidAB;
+      ph.eutFrac2 = ph.fSolidAB / 100;
+    } else {
+      ph.eutecticType = 'AB+B';
+      ph.fSolidB = (e.xPct - c.xABpct) / (100 - c.xABpct) * 100;  // доля B в эвтектике / B share
+      ph.fSolidAB = 100 - ph.fSolidB;
+      ph.eutFrac2 = ph.fSolidB / 100;
+    }
+    return ph;
+  }
+
+  /* Выше ликвидуса — жидкость / Above liquidus — liquid */
+  if (T_C >= ph.Tliq_C) { ph.kind = 'LIQUID'; return ph; }
+
+  /* Между ликвидусом и своей эвтектикой — двухфазная область /
+   * Between liquidus and own eutectic — two-phase region */
+  if (T_C > e.T_C) {
+    const T_K = c2k(T_C);
+    if (inSub1 && x < e.xPct) {
+      /* Кристаллизуется A; жидкость обогащается AB / A crystallizes; liquid enriched in AB */
+      ph.kind = 'L+A';
+      const xAeff = Math.exp((state.dH_A / R_GAS) * (1 / model.TmA_K - 1 / T_K));
+      ph.xLiquid = c.xABpct * (1 - xAeff);
+      ph.fSolidA = (ph.xLiquid - x) / ph.xLiquid * 100;      // рычаг: тв. A при x=0 / lever rule
+    } else if (inSub1) {
+      /* Кристаллизуется AB; жидкость обогащается A / AB crystallizes; liquid enriched in A */
+      ph.kind = 'L+AB';
+      const xABeff = Math.exp((state.dH_AB / R_GAS) * (1 / model.TmAB_K - 1 / T_K));
+      ph.xLiquid = c.xABpct * xABeff;
+      ph.fSolidAB = (x - ph.xLiquid) / (c.xABpct - ph.xLiquid) * 100;
+    } else if (x < e.xPct) {
+      /* Кристаллизуется AB; жидкость обогащается B / AB crystallizes; liquid enriched in B */
+      ph.kind = 'L+AB';
+      const xABeff = Math.exp((state.dH_AB / R_GAS) * (1 / model.TmAB_K - 1 / T_K));
+      ph.xLiquid = 100 - (100 - c.xABpct) * xABeff;
+      ph.fSolidAB = (ph.xLiquid - x) / (ph.xLiquid - c.xABpct) * 100;
+    } else {
+      /* Кристаллизуется B; жидкость обогащается AB / B crystallizes; liquid enriched in AB */
+      ph.kind = 'L+B';
+      const xBeff = Math.exp((state.dH_B / R_GAS) * (1 / model.TmB_K - 1 / T_K));
+      ph.xLiquid = c.xABpct + (100 - c.xABpct) * xBeff;
+      ph.fSolidB = (x - ph.xLiquid) / (100 - ph.xLiquid) * 100;
+    }
+    ph.fLiquid = 100 - ph.fSolidA - ph.fSolidB - ph.fSolidAB;
+    return ph;
+  }
+
+  /* Ниже своей эвтектики — первичные кристаллы + эвтектика /
+   * Below the own eutectic — primary crystals + eutectic mixture */
+  ph.kind = 'SOLID'; ph.fLiquid = 0;
+  if (inSub1) {
+    ph.eutecticType = 'A+AB';
+    const fAB_inEut = e.xPct / c.xABpct;             // доля AB в эвтектике / AB share in eutectic
+    ph.eutFrac2 = fAB_inEut;
+    if (x < e.xPct) {
+      ph.fPrimaryA = (e.xPct - x) / e.xPct * 100;
+      ph.fEutectic = x / e.xPct * 100;
+    } else {
+      ph.fPrimaryAB = (x - e.xPct) / (c.xABpct - e.xPct) * 100;
+      ph.fEutectic = (c.xABpct - x) / (c.xABpct - e.xPct) * 100;
+    }
+    ph.fSolidA = ph.fPrimaryA + ph.fEutectic * (1 - fAB_inEut);
+    ph.fSolidAB = ph.fPrimaryAB + ph.fEutectic * fAB_inEut;   // + первичные AB / plus primary AB
+  } else {
+    ph.eutecticType = 'AB+B';
+    const fB_inEut = (e.xPct - c.xABpct) / (100 - c.xABpct);   // доля B в эвтектике / B share
+    ph.eutFrac2 = fB_inEut;
+    if (x < e.xPct) {
+      ph.fPrimaryAB = (e.xPct - x) / (e.xPct - c.xABpct) * 100;
+      ph.fEutectic = (x - c.xABpct) / (e.xPct - c.xABpct) * 100;
+    } else {
+      ph.fPrimaryB = (x - e.xPct) / (100 - e.xPct) * 100;
+      ph.fEutectic = (100 - x) / (100 - e.xPct) * 100;
+    }
+    ph.fSolidB = ph.fPrimaryB + ph.fEutectic * fB_inEut;
+    ph.fSolidAB = ph.fPrimaryAB + ph.fEutectic * (1 - fB_inEut);   // + первичные AB / plus primary AB
+  }
+  return ph;
+}
+
 /*
  * Определение фазового состояния и долей фаз (правило рычага).
  * Determine phase state and phase fractions (lever rule).
@@ -331,6 +711,11 @@ function calculateEutectic() {
  * NOTE: the liquid composition is ALWAYS enriched in the component that does NOT crystallize.
  */
 function computePhase(xBpct, T_C) {
+  /* v3.0: в режиме соединения фазы считаются по подсистемам /
+   * v3.0: in compound mode phases are computed per subsystem */
+  if (state.showCompound && model.compound && !model.compound.unstable) {
+    return computePhaseCompound(xBpct, T_C);
+  }
   const eut = model.eutectic;
   const x = clamp(xBpct, 0, 100);
   /* Результирующий объект / Result object */
@@ -339,6 +724,7 @@ function computePhase(xBpct, T_C) {
     pure: null,              // 'A' | 'B' — чистый компонент / pure component
     eutecticStructure: false,// структура — чистая эвтектика / structure is pure eutectic
     fSolidA: 0, fSolidB: 0,  // доли твёрдых фаз, % / solid phase fractions, %
+    fSolidAB: 0,             // доля твёрдого соединения (v3.0) / solid compound fraction (v3.0)
     fLiquid: 100,            // доля жидкости, % / liquid fraction, %
     xLiquid: null,           // состав жидкости, % B / liquid composition, % B
     Tliq_C: null,            // температура ликвидуса данного состава / liquidus T of this composition
@@ -443,9 +829,18 @@ function checkBalance(ph) {
   } else if (ph.kind === 'L+B') {
     // x_solid = 100 (чистый B) / solid is pure B
     xStar = ph.fSolidB / 100 * 100 + ph.fLiquid / 100 * ph.xLiquid;
+  } else if (ph.kind === 'L+AB') {
+    // v3.0: x_solid = x_AB (чистое соединение) / solid is the pure compound
+    xStar = ph.fSolidAB / 100 * model.compound.xABpct + ph.fLiquid / 100 * ph.xLiquid;
   } else if (ph.kind === 'SOLID' && !ph.pure) {
-    // Твёрдое состояние: A(x=0) + B(x=100) / solid mixture of pure A and pure B
-    xStar = ph.fSolidA / 100 * 0 + ph.fSolidB / 100 * 100;
+    // Твёрдое состояние: смесь чистых фаз / solid mixture of pure phases
+    if (state.showCompound && model.compound && !model.compound.unstable) {
+      // v3.0: A(x=0) + AB(x=x_AB) + B(x=100) / mixture of A, compound and B
+      xStar = ph.fSolidA / 100 * 0 + ph.fSolidAB / 100 * model.compound.xABpct + ph.fSolidB / 100 * 100;
+    } else {
+      // A(x=0) + B(x=100) / pure A and pure B
+      xStar = ph.fSolidA / 100 * 0 + ph.fSolidB / 100 * 100;
+    }
   }
   if (xStar === null) return null;
   return Math.abs(xStar - ph.x);
@@ -459,9 +854,20 @@ function recompute() {
   model = {
     TmA_K: c2k(state.TmA_C),
     TmB_K: c2k(state.TmB_C),
+    TmAB_K: c2k(state.TmAB_C),      // v3.0: температура плавления соединения / compound melting point
+    compound: null,
   };
   /* Точка эвтектики / Eutectic point */
   model.eutectic = calculateEutectic();
+  /* v3.0: подсистемы и эвтектики E1/E2 / v3.0: subsystems and eutectics E1/E2 */
+  modelWarnings = [];
+  if (state.showCompound) {
+    model.compound = calculateSubsystems();
+    if (model.compound.unstable) {
+      modelWarnings.push('Соединение ' + model.compound.formula +
+        ' термодинамически неустойчиво при заданных параметрах (T_пл соединения не выше эвтектических температур) — режим соединения не отрисован / the compound is thermodynamically unstable (melting point below the eutectics) — compound mode not drawn');
+    }
+  }
   /* Динамический диапазон оси Y (пересчитывается при каждом изменении) /
    * Dynamic Y-axis range (recomputed on every change) */
   updateViewRange();
@@ -485,7 +891,12 @@ function cacheElements() {
   ['in-nameA', 'in-nameB', 'in-tmA', 'in-tmB', 'in-dhA', 'in-dhB',
    'in-x', 'in-T', 'val-x', 'val-T', 'i-state', 'i-fsa', 'i-fsb', 'i-fl',
    'i-xl', 'i-tl', 'i-te', 'i-xe', 'i-struct', 'i-bal', 'warning',
-   'btn-cool', 'btn-save-diag', 'btn-save-micro'].forEach(id => {
+   'btn-cool', 'btn-save-diag', 'btn-save-micro',
+   /* v3.0 / v3.0 */
+   'in-m', 'in-n', 'in-tmAB', 'in-dhAB', 'in-showAB', 'ab-formula',
+   'i-sub', 'i-fsab', 'i-comp', 'i-e1', 'i-e2',
+   'legend-ab', 'legend-ab-formula', 'legend-solid', 'btn-share', 'tooltip', 'toast',
+   ].forEach(id => {
     el[id] = document.getElementById(id);
   });
 }
@@ -507,6 +918,18 @@ const NUM_FIELDS = [
   { id: 'in-tmB', key: 'TmB_C', min: T_MIN_C, max: T_MAX_C, label: 'T_пл(B)' },
   { id: 'in-dhA', key: 'dH_A', min: DH_MIN, max: DH_MAX, label: 'ΔH_пл(A)', isDh: true },
   { id: 'in-dhB', key: 'dH_B', min: DH_MIN, max: DH_MAX, label: 'ΔH_пл(B)', isDh: true },
+  /* v3.0: параметры соединения / v3.0: compound parameters */
+  { id: 'in-tmAB', key: 'TmAB_C', min: T_MIN_C, max: T_MAX_C, label: 'T_пл(соед.)' },
+  { id: 'in-dhAB', key: 'dH_AB', min: DH_MIN, max: DH_MAX, label: 'ΔH_пл(соед.)', isDh: true },
+];
+
+/*
+ * v3.0: целочисленные поля стехиометрии m и n (1…5).
+ * v3.0: integer stoichiometry fields m and n (1…5).
+ */
+const MN_FIELDS = [
+  { id: 'in-m', key: 'm', label: 'm' },
+  { id: 'in-n', key: 'n', label: 'n' },
 ];
 
 /*
@@ -565,7 +988,55 @@ function commitNumericFields() {
     state[f.key] = v;
     el[f.id].value = String(v);
   });
-  showWarnings(warn);
+  inputWarnings = warn;
+  recomputeAll();
+}
+
+/*
+ * Чтение целочисленных полей стехиометрии ВО ВРЕМЯ набора (поля не переписываются).
+ * Read integer stoichiometry fields WHILE typing (fields are never rewritten).
+ */
+function readMnFields(warn) {
+  MN_FIELDS.forEach(f => {
+    const raw = parseFloat(el[f.id].value);
+    if (isNaN(raw)) return;                       // пользователь ещё печатает / still typing
+    const v = Math.round(raw);
+    if (v >= MN_MIN && v <= MN_MAX) {
+      state[f.key] = v;
+    } else {
+      /* Случай 2 по ТЗ: m=0 или n=0 — не соединение; при наборе просто игнорируем /
+       * Spec case 2: m=0 or n=0 — not a compound; ignored while typing */
+      warn.push('Стехиометрия ' + f.label + ' должна быть целым числом от ' + MN_MIN +
+        ' до ' + MN_MAX + ' / stoichiometry must be an integer from ' + MN_MIN + ' to ' + MN_MAX);
+    }
+  });
+}
+
+/*
+ * Завершение ввода стехиометрии (blur/Enter): нормализация с восстановлением.
+ * Stoichiometry editing finished (blur/Enter): normalize, restoring invalid values.
+ */
+function commitMnFields() {
+  const warn = [];
+  MN_FIELDS.forEach(f => {
+    const raw = parseFloat(el[f.id].value);
+    if (isNaN(raw)) {
+      el[f.id].value = String(state[f.key]);
+      warn.push('Стехиометрия ' + f.label + ': введено не число — восстановлено ' + state[f.key] +
+        ' / not a number — previous value restored');
+      return;
+    }
+    const v = Math.round(raw);
+    if (v < MN_MIN || v > MN_MAX) {
+      el[f.id].value = String(state[f.key]);
+      warn.push('Стехиометрия ' + f.label + ' = ' + raw + ' вне диапазона ' + MN_MIN + '…' + MN_MAX +
+        ' — восстановлено ' + state[f.key] + ' / out of range — previous value restored');
+    } else {
+      state[f.key] = v;
+      el[f.id].value = String(v);
+    }
+  });
+  inputWarnings = warn;
   recomputeAll();
 }
 
@@ -586,13 +1057,17 @@ function readControls() {
    * --- Melting points and enthalpies of fusion (fields are NOT rewritten!) --- */
   readNumericFields(warn);
 
+  /* --- v3.0: стехиометрия и чекбокс соединения / v3.0: stoichiometry and compound checkbox --- */
+  readMnFields(warn);
+  state.showCompound = el['in-showAB'].checked;
+
   /* --- Слайдеры состава и температуры / Composition and temperature sliders --- */
   const xv = parseFloat(el['in-x'].value);
   if (!isNaN(xv)) state.xB = clamp(xv, 0, 100);
   const tv = parseFloat(el['in-T'].value);
   if (!isNaN(tv)) state.T_C = clamp(tv, T_MIN_C, T_MAX_C);
 
-  showWarnings(warn);
+  inputWarnings = warn;
 }
 
 /* Синхронизация слайдеров и подписей значений / Sync sliders and value labels */
@@ -601,22 +1076,33 @@ function syncInputs() {
   el['in-T'].value = String(state.T_C);
   el['val-x'].textContent = state.xB.toFixed(1) + '%';
   el['val-T'].textContent = state.T_C.toFixed(0) + ' °C';
+  syncFormulaLabel();               // v3.0: подпись формулы соединения / compound formula label
 }
 
 /* Текст фазового состояния / Phase state text */
 function phaseStateText(ph) {
   const nA = state.nameA, nB = state.nameB;
+  const F = (model && model.compound) ? model.compound.formula : getFormulaString(state.m, state.n);
   switch (ph.kind) {
     case 'LIQUID':
       return ph.pure === 'A' ? 'Жидкость (расплав ' + nA + ') / Liquid (pure ' + nA + ')'
            : ph.pure === 'B' ? 'Жидкость (расплав ' + nB + ') / Liquid (pure ' + nB + ')'
+           : ph.pure === 'AB' ? 'Жидкость (расплав ' + F + ') / Liquid (pure ' + F + ')'
            : 'Жидкость / Liquid';
     case 'L+A': return 'Жидкость + твёрдый ' + nA + ' / Liquid + Solid A';
     case 'L+B': return 'Жидкость + твёрдый ' + nB + ' / Liquid + Solid B';
+    case 'L+AB': return 'Жидкость + твёрдое ' + F + ' / Liquid + Solid ' + F;
     case 'SOLID':
       if (ph.pure === 'A') return 'Твёрдый чистый ' + nA + ' / Pure solid A';
       if (ph.pure === 'B') return 'Твёрдый чистый ' + nB + ' / Pure solid B';
-      if (ph.eutecticStructure) return 'Твёрдое: эвтектика (A+B) / Solid: eutectic (A+B)';
+      if (ph.pure === 'AB') return 'Твёрдое чистое соединение ' + F + ' / Pure solid compound ' + F;
+      if (ph.eutecticStructure) {
+        return ph.eutecticType === 'AB+B'
+          ? 'Твёрдое: эвтектика (' + F + '+B) / Solid: eutectic (' + F + '+B)'
+          : 'Твёрдое: эвтектика (A+' + F + ') / Solid: eutectic (A+' + F + ')';
+      }
+      if (ph.eutecticType === 'AB+B') return 'Твёрдое: ' + F + ' + ' + nB + ' / Solid: ' + F + ' + B';
+      if (ph.eutecticType === 'A+AB') return 'Твёрдое: ' + nA + ' + ' + F + ' / Solid: A + ' + F;
       return 'Твёрдое: ' + nA + ' + ' + nB + ' / Solid: A + B';
   }
   return '—';
@@ -628,21 +1114,56 @@ function phaseStateText(ph) {
  */
 function updateInfo() {
   const ph = model.phase, eut = model.eutectic;
+  const comp = model.compound;
+  const compoundActive = state.showCompound && comp && !comp.unstable;
   el['i-state'].textContent = phaseStateText(ph);
   el['i-fsa'].textContent = ph.fSolidA.toFixed(1) + ' %';
   el['i-fsb'].textContent = ph.fSolidB.toFixed(1) + ' %';
+  el['i-fsab'].textContent = compoundActive ? ph.fSolidAB.toFixed(1) + ' %' : '—';
   el['i-fl'].textContent = ph.fLiquid.toFixed(1) + ' %';
   el['i-xl'].textContent = ph.xLiquid === null ? '— (однофазная область / single-phase)' : ph.xLiquid.toFixed(1) + ' % B';
   el['i-tl'].textContent = ph.Tliq_C === null ? '—' : ph.Tliq_C.toFixed(1) + ' °C';
-  el['i-te'].textContent = eut.T_C.toFixed(1) + ' °C';
-  el['i-xe'].textContent = eut.xPct.toFixed(1) + ' % B';
+  /* v3.0: подсистема / v3.0: subsystem */
+  el['i-sub'].textContent = compoundActive ? (ph.subsystem || '—') : '— (режим выключен / mode off)';
+  /* v3.0: соединение и эвтектики E1/E2 / v3.0: compound and eutectics E1/E2 */
+  if (compoundActive) {
+    el['i-comp'].textContent = comp.formula + ': x = ' + comp.xABpct.toFixed(1) + '% B, T_пл = ' + state.TmAB_C.toFixed(0) + ' °C';
+    el['i-e1'].textContent = comp.e1.degenerate ? 'не найдена (вырожд. / degenerate)' :
+      'x = ' + comp.e1.xPct.toFixed(1) + '% B, T = ' + comp.e1.T_C.toFixed(1) + ' °C';
+    el['i-e2'].textContent = comp.e2.degenerate ? 'не найдена (вырожд. / degenerate)' :
+      'x = ' + comp.e2.xPct.toFixed(1) + '% B, T = ' + comp.e2.T_C.toFixed(1) + ' °C';
+    el['i-te'].textContent = '— (две эвтектики / two eutectics)';
+    el['i-xe'].textContent = '— (две эвтектики / two eutectics)';
+    el['legend-ab'].hidden = false;
+    el['legend-ab-formula'].textContent = comp.formula;
+    el['legend-solid'].textContent = 'Твёрдые фазы / Solid phases';
+  } else {
+    el['i-comp'].textContent = comp && comp.unstable ? 'неустойчиво / unstable' : '— (режим выключен / mode off)';
+    el['i-e1'].textContent = '—';
+    el['i-e2'].textContent = '—';
+    el['i-te'].textContent = eut.T_C.toFixed(1) + ' °C';
+    el['i-xe'].textContent = eut.xPct.toFixed(1) + ' % B';
+    el['legend-ab'].hidden = true;
+    el['legend-solid'].textContent = 'Твёрдое A+B / Solid A+B';
+  }
   /* Структура в твёрдом состоянии / Solid-state microstructure */
   if (ph.kind === 'SOLID' && !ph.pure) {
-    if (ph.eutecticStructure) el['i-struct'].textContent = '100% эвтектика / 100% eutectic';
-    else if (ph.fPrimaryA > 0) el['i-struct'].textContent = 'Первичные ' + state.nameA + ': ' + ph.fPrimaryA.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '% / Primary A + eutectic';
+    if (ph.eutecticStructure) {
+      el['i-struct'].textContent = compoundActive
+        ? '100% эвтектики (' + ph.eutecticType + ') / 100% eutectic (' + ph.eutecticType + ')'
+        : '100% эвтектика / 100% eutectic';
+    } else if (compoundActive && ph.fPrimaryAB > 0) {
+      el['i-struct'].textContent = 'Первичные ' + comp.formula + ': ' + ph.fPrimaryAB.toFixed(1) + '% • Эвтектика (' + ph.eutecticType + '): ' + ph.fEutectic.toFixed(1) + '% / Primary ' + comp.formula + ' + eutectic';
+    } else if (compoundActive && ph.eutecticType === 'A+AB') {
+      el['i-struct'].textContent = 'Первичные ' + state.nameA + ': ' + ph.fPrimaryA.toFixed(1) + '% • Эвтектика (' + ph.eutecticType + '): ' + ph.fEutectic.toFixed(1) + '% / Primary A + eutectic';
+    } else if (compoundActive && ph.eutecticType === 'AB+B') {
+      el['i-struct'].textContent = 'Первичные ' + state.nameB + ': ' + ph.fPrimaryB.toFixed(1) + '% • Эвтектика (' + ph.eutecticType + '): ' + ph.fEutectic.toFixed(1) + '% / Primary B + eutectic';
+    } else if (ph.fPrimaryA > 0) el['i-struct'].textContent = 'Первичные ' + state.nameA + ': ' + ph.fPrimaryA.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '% / Primary A + eutectic';
     else el['i-struct'].textContent = 'Первичные ' + state.nameB + ': ' + ph.fPrimaryB.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '% / Primary B + eutectic';
   } else if (ph.kind === 'SOLID') {
-    el['i-struct'].textContent = '100% чистой фазы / 100% pure phase';
+    el['i-struct'].textContent = compoundActive && ph.pure === 'AB'
+      ? '100% чистого соединения (без эвтектики) / 100% pure compound (no eutectic)'
+      : '100% чистой фазы / 100% pure phase';
   } else if (ph.kind === 'LIQUID') {
     el['i-struct'].textContent = '— (жидкость / liquid)';
   } else {
@@ -657,17 +1178,28 @@ function updateInfo() {
   }
 }
 
+/* Синхронизация подписи формулы соединения / Sync the compound formula label */
+function syncFormulaLabel() {
+  const F = getFormulaString(state.m, state.n);
+  const xAB = 100 * state.n / (state.m + state.n);
+  el['ab-formula'].textContent = 'Формула / Formula: ' + F + ' • x = ' + xAB.toFixed(1) + '% B • T_пл = ' + state.TmAB_C + ' °C';
+}
+
 /* Полный цикл обновления / Full update cycle */
 function recomputeAll() {
   recompute();
   syncInputs();
   updateInfo();
+  /* Предупреждения: от полей ввода + от модели (нестабильное соединение) /
+   * Warnings: from input fields + from the model (unstable compound) */
+  showWarnings(inputWarnings.concat(modelWarnings));
   if (diagP) diagP.redraw();
   if (microP) microP.redraw();
 }
 
 /* Обработчик любого изменения ввода / Handler for any input change */
 function onControlInput() {
+  finishCompoundAnim();      // ввод прерывает анимацию / input interrupts the animation
   readControls();
   recomputeAll();
 }
@@ -694,13 +1226,18 @@ const view = { tTop: T_MAX_C, tBottom: T_MIN_C };
 
 /* Пересчёт динамического диапазона оси Y / Recompute the dynamic Y-axis range */
 function updateViewRange() {
-  const maxTm = Math.max(state.TmA_C, state.TmB_C);
+  /* v3.0: в режиме соединения учитываем T_пл соединения и обе эвтектики /
+   * v3.0: in compound mode include the compound melting point and both eutectics */
+  const comp = (state.showCompound && model.compound && !model.compound.unstable) ? model.compound : null;
+  const maxTm = Math.max(state.TmA_C, state.TmB_C, comp ? state.TmAB_C : -Infinity);
   const eut = model.eutectic;
   let tTop = Math.max(maxTm + TOP_MARGIN_C, state.T_C + TOP_MARGIN_C);
+  /* Самая низкая эвтектическая (солидусная) температура / The lowest eutectic (solidus) temperature */
+  const solidusT = comp ? Math.min(comp.e1.T_C, comp.e2.T_C) : eut.T_C;
   /* Запас под солидусом, чтобы серая зона и её подпись были видны /
    * Margin below the solidus so the gray zone and its label stay visible */
-  const below = clamp(0.15 * (tTop - eut.T_C), 40, 150);
-  let tBottom = Math.min(eut.T_C - below, state.T_C - TOP_MARGIN_C);
+  const below = clamp(0.15 * (tTop - solidusT), 40, 150);
+  let tBottom = Math.min(solidusT - below, state.T_C - TOP_MARGIN_C);
   tBottom = Math.max(tBottom, -300);              // не глубже -300 °C / not deeper than -300 °C
   if (tTop - tBottom < 20) tTop = tBottom + 20;   // защита от вырождения / degenerate guard
   view.tTop = tTop;
@@ -779,6 +1316,21 @@ function drawPhaseDiagram(p) {
   p.noStroke(); p.fill(30); p.textSize(15); p.textStyle(p.BOLD); p.textAlign(p.LEFT, p.TOP);
   p.text('Фазовая диаграмма ' + state.nameA + '–' + state.nameB + ' / Phase diagram', PX.x0 - 30, 14);
   p.textStyle(p.NORMAL);
+
+  /* v3.0: режим соединения — морфинг кривых, иначе обычная отрисовка v2.1 /
+   * v3.0: compound mode — curve morphing, otherwise the plain v2.1 rendering */
+  const compoundDrawn = state.showCompound && model.compound && !model.compound.unstable;
+  if (compoundDrawn) {
+    drawZonesMorph(p, compT);
+    drawGridAxes(p);
+    drawLiquidusMorph(p, compT);
+    drawZoneLabels(p, Math.round(255 * (1 - compT)));          // старые подписи гаснут / old labels fade out
+    drawZoneLabelsCompound(p, compT);                          // новые подписи проявляются / new labels fade in
+    drawEutecticMark(p, Math.round(255 * (1 - compT)));        // старая эвтектика гаснет / old eutectic fades out
+    drawCompoundMarks(p, compT);                               // E1, E2, пик, вертикаль / E1, E2, peak, vertical line
+    drawPhasePoint(p);
+    return;
+  }
 
   drawZones(p);          // Закрашивание зон фаз / Fill phase zones
   drawGridAxes(p);       // Сетка и оси / Grid and axes
@@ -909,9 +1461,12 @@ function drawLiquidus(p) {
   p.strokeWeight(1);
 }
 
-/* Подписи зон / Zone labels */
-function drawZoneLabels(p) {
+/* Подписи зон / Zone labels. alpha — прозрачность (для кроссфейда v3.0) /
+ * Zone labels. alpha — opacity (for the v3.0 crossfade) */
+function drawZoneLabels(p, alpha) {
   const e = model.eutectic;
+  const a = (alpha === undefined) ? 255 : alpha;
+  if (a <= 3) return;
   p.noStroke(); p.textSize(12); p.textStyle(p.BOLD); p.textAlign(p.CENTER, p.CENTER);
 
   /* Жидкость / Liquid — безопасно выше обеих ветвей ликвидуса /
@@ -919,7 +1474,7 @@ function drawZoneLabels(p) {
   /* Посередине между пиком ликвидуса и верхом динамической шкалы /
    * Midway between the liquidus peak and the top of the dynamic scale */
   const tLiquid = (Math.max(state.TmA_C, state.TmB_C) + view.tTop) / 2;
-  p.fill(150, 60, 90);
+  p.fill(150, 60, 90, a);
   p.text('Liquid / Жидкость', xToPx(50), tToPx(tLiquid));
 
   /* L + A / L + B — нижние части двухфазных линз (у солидуса), чтобы не
@@ -928,39 +1483,318 @@ function drawZoneLabels(p) {
    * to avoid collision with the interactive point */
   const xMidL = e.xPct / 2;
   const tMidL = e.T_C + 0.25 * (k2c(liquidusTempA(xMidL / 100)) - e.T_C);
-  p.fill(COL.A_DARK[0], COL.A_DARK[1], COL.A_DARK[2]);
+  p.fill(COL.A_DARK[0], COL.A_DARK[1], COL.A_DARK[2], a);
   p.text('L + A(тв)', xToPx(xMidL), tToPx(tMidL));
 
   const xMidR = e.xPct + (100 - e.xPct) / 2;
   const tMidR = e.T_C + 0.25 * (k2c(liquidusTempB(xMidR / 100)) - e.T_C);
-  p.fill(COL.B_DARK[0], COL.B_DARK[1], COL.B_DARK[2]);
+  p.fill(COL.B_DARK[0], COL.B_DARK[1], COL.B_DARK[2], a);
   p.text('L + B(тв)', xToPx(xMidR), tToPx(tMidR));
 
   /* A + B (твёрдое) / solid */
-  p.fill(90);
+  p.fill(90, 90, 90, a);
   p.text('A(тв) + B(тв)', xToPx(50), Math.min(tToPx(e.T_C) + 20, PX.y1 - 12));
   p.textStyle(p.NORMAL);
 }
 
-/* Маркер эвтектической точки / Eutectic point marker */
-function drawEutecticMark(p) {
+/* Маркер эвтектической точки / Eutectic point marker. alpha — прозрачность /
+ * Eutectic point marker. alpha — opacity */
+function drawEutecticMark(p, alpha) {
   const e = model.eutectic;
+  const a = (alpha === undefined) ? 255 : alpha;
+  if (a <= 3) return;
   const px = xToPx(e.xPct), py = tToPx(e.T_C);
-  p.stroke(20); p.strokeWeight(1.5); p.fill(255);
+  p.stroke(20, 20, 20, a); p.strokeWeight(1.5); p.fill(255, 255, 255, a);
   p.circle(px, py, 9);
   /* Подпись размещаем НАД ветвями ликвидуса (в зоне жидкости), чтобы не
    * перекрывать метки узких двухфазных линз /
    * The label goes ABOVE the liquidus branches (in the liquid zone) so it
    * does not overlap the labels of the narrow two-phase lenses */
-  p.noStroke(); p.fill(20); p.textSize(11); p.textStyle(p.BOLD);
+  p.noStroke(); p.fill(20, 20, 20, a); p.textSize(11); p.textStyle(p.BOLD);
   const rightSide = px > PX.x0 + 0.5 * (PX.x1 - PX.x0);
   p.textAlign(rightSide ? p.RIGHT : p.LEFT, p.BOTTOM);
   /* Белая подложка для читаемости поверх линий / white halo for readability over lines */
   const eutText = 'Эвтектика / Eutectic: ' + e.xPct.toFixed(1) + '%, ' + e.T_C.toFixed(0) + '°C';
-  p.stroke(255); p.strokeWeight(3);
+  p.stroke(255, 255, 255, a); p.strokeWeight(3);
   p.text(eutText, px + (rightSide ? -10 : 10), py - 14);
   p.noStroke();
   p.text(eutText, px + (rightSide ? -10 : 10), py - 14);
+  p.strokeWeight(1);
+  p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
+}
+
+/* ============================================================================
+ * v3.0: ОТРИСОВКА РЕЖИМА СОЕДИНЕНИЯ (МОРФИНГ "ВЫРАСТАНИЯ" ГОРБА)
+ * v3.0: COMPOUND-MODE RENDERING ("HUMP GROWTH" MORPHING)
+ *
+ * При включении чекбокса ликвидус плавно переходит от простой эвтектики к
+ * четырёхветвенному ликвидусу с пиком соединения: в каждой точке состава
+ * температура интерполируется T(t) = lerp(T_простая, T_соединение, t).
+ * При t = 0 картинка совпадает с v2.1, при t = 1 — итоговая диаграмма v3.0.
+ * When the checkbox is switched on the liquidus smoothly morphs from the
+ * simple eutectic into the four-branch curve with the compound peak: at every
+ * composition the temperature interpolates T(t) = lerp(T_simple, T_compound, t).
+ * At t = 0 the picture matches v2.1; at t = 1 it is the final v3.0 diagram.
+ * ========================================================================== */
+let compT = 0;                    // текущий параметр морфинга 0…1 / current morph parameter 0…1
+const MORPH_N = 160;              // точек морфированной кривой / morphed curve samples
+
+function lerpAB(a, b, t) { return a + (b - a) * t; }
+
+/* Огибающая ликвидуса простой системы, °C / Simple-system liquidus envelope, °C */
+function simpleLiquidusC(xFrac) {
+  return Math.max(k2c(liquidusTempA(xFrac)), k2c(liquidusTempB(xFrac)));
+}
+
+/* Огибающая ликвидуса системы с соединением (4 ветви), °C /
+ * Liquidus envelope with the compound (4 branches), °C */
+function compoundLiquidusC(xFrac) {
+  const c = model.compound;
+  if (xFrac <= c.xABfrac) {
+    return Math.max(k2c(liquidusTempA_sub1(xFrac)), k2c(liquidusTempAB_left(xFrac)));
+  }
+  return Math.max(k2c(liquidusTempAB_right(xFrac)), k2c(liquidusTempB_sub2(xFrac)));
+}
+
+/*
+ * Точки морфированной кривой [x%, T°C] с обязательными изломами
+ * (промежуточные эвтектики и пик соединения).
+ * Morphed curve points [x%, T°C] with mandatory breakpoints
+ * (intermediate eutectics and the compound peak).
+ */
+function morphPoints(t) {
+  const c = model.compound, e0 = model.eutectic;
+  const xs = [];
+  for (let i = 0; i <= MORPH_N; i++) xs.push(i / MORPH_N * 100);
+  xs.push(lerpAB(e0.xPct, c.e1.xPct, t));     // излом E1 / E1 breakpoint
+  xs.push(c.xABpct);                          // пик соединения / compound peak
+  xs.push(lerpAB(e0.xPct, c.e2.xPct, t));     // излом E2 / E2 breakpoint
+  xs.sort((a, b) => a - b);
+  return xs.map(x => [x, lerpAB(simpleLiquidusC(x / 100), compoundLiquidusC(x / 100), t)]);
+}
+
+/* Температура морфированной кривой в точке (по ближайшей выборке) /
+ * Morphed curve temperature at x (nearest sample) */
+function morphAt(pts, x) {
+  let best = pts[0];
+  for (const pt of pts) if (Math.abs(pt[0] - x) < Math.abs(best[0] - x)) best = pt;
+  return best[1];
+}
+
+/* Интерполированные (морфные) положения эвтектик / Interpolated (morphed) eutectic positions */
+function morphEutectics(t) {
+  const c = model.compound, e0 = model.eutectic;
+  return {
+    x1: lerpAB(e0.xPct, c.e1.xPct, t), T1: lerpAB(e0.T_C, c.e1.T_C, t),
+    x2: lerpAB(e0.xPct, c.e2.xPct, t), T2: lerpAB(e0.T_C, c.e2.T_C, t),
+  };
+}
+
+/*
+ * Зоны фаз в режиме соединения (морфинг).
+ * Phase zones in compound mode (morphing).
+ */
+function drawZonesMorph(p, t) {
+  const c = model.compound;
+  const me = morphEutectics(t);
+  const pts = morphPoints(t);
+  p.noStroke();
+
+  /* Выше ликвидуса: Liquid / Above the liquidus: liquid */
+  p.fill(COL.LIQUID[0], COL.LIQUID[1], COL.LIQUID[2], COL.LIQUID_ALPHA);
+  p.beginShape();
+  p.vertex(xToPx(0), PX.y0);
+  p.vertex(xToPx(100), PX.y0);
+  p.vertex(xToPx(100), tToPx(pts[pts.length - 1][1]));
+  for (let i = pts.length - 1; i >= 0; i--) p.vertex(xToPx(pts[i][0]), tToPx(pts[i][1]));
+  p.endShape(p.CLOSE);
+
+  /* Двухфазные линзы между солидусом и морфированным ликвидусом /
+   * Two-phase lenses between the solidus and the morphed liquidus */
+  const lens = (xFrom, xTo, TE, col) => {
+    if (xTo - xFrom <= 0.01) return;           // вырожденная линза / degenerate lens
+    p.fill(col[0], col[1], col[2], col[3]);
+    p.beginShape();
+    p.vertex(xToPx(xFrom), tToPx(TE));
+    pts.forEach(pt => {
+      if (pt[0] >= xFrom - 1e-9 && pt[0] <= xTo + 1e-9) p.vertex(xToPx(pt[0]), tToPx(pt[1]));
+    });
+    p.vertex(xToPx(xTo), tToPx(TE));
+    p.endShape(p.CLOSE);
+  };
+  lens(0, me.x1, me.T1, COL.ZONE_LA);                    // L + A / L + A
+  lens(me.x1, c.xABpct, me.T1, COL.ZONE_LAB);            // L + AB (левая) / L + AB (left)
+  lens(c.xABpct, me.x2, me.T2, COL.ZONE_LAB);            // L + AB (правая) / L + AB (right)
+  lens(me.x2, 100, me.T2, COL.ZONE_LB);                  // L + B / L + B
+
+  /* Ниже солидуса: две ступени A+AB и AB+B. База — нейтральный серый,
+   * полосы цветов фаз проявляются с параметром морфинга /
+   * Below the solidus: two steps, A+AB and AB+B. Neutral gray base; the
+   * phase-color stripes fade in with the morph parameter */
+  const yL = tToPx(me.T1), yR = tToPx(me.T2), xABpx = xToPx(c.xABpct);
+  p.fill(COL.ZONE_SOLID);
+  p.rect(PX.x0, yL, xABpx - PX.x0, PX.y1 - yL + 1);
+  p.rect(xABpx, yR, PX.x1 - xABpx, PX.y1 - yR + 1);
+  if (t > 0.01) {
+    drawSolidStripes(p, PX.x0, xABpx, yL, COL.A, COL.AB, Math.round(150 * t));
+    drawSolidStripes(p, xABpx, PX.x1, yR, COL.AB, COL.B, Math.round(150 * t));
+  }
+}
+
+/*
+ * Полосы "смеси фаз" в твёрдой зоне (A+AB — фиолет/оранж, AB+B — оранж/зелён).
+ * "Phase mixture" stripes in a solid zone (A+AB purple/orange, AB+B orange/green).
+ */
+function drawSolidStripes(p, x0, x1, yTop, col1, col2, alpha) {
+  if (alpha <= 3) return;
+  p.noStroke();
+  const w = 9;                                   // ширина полосы / stripe width, px
+  let x = x0, i = 0;
+  while (x < x1) {
+    const c = (i % 2 === 0) ? col1 : col2;
+    p.fill(c[0], c[1], c[2], alpha);
+    p.rect(x, yTop, Math.min(w, x1 - x), PX.y1 - yTop + 1);
+    x += w; i++;
+  }
+}
+
+/*
+ * Линии ликвидуса (4 ветви), два солидуса и вертикальная линия соединения.
+ * Liquidus lines (4 branches), two solidus lines and the compound vertical line.
+ */
+function drawLiquidusMorph(p, t) {
+  const c = model.compound;
+  const me = morphEutectics(t);
+  const pts = morphPoints(t);
+  p.noFill(); p.strokeWeight(3);
+
+  /* Ветви ликвидуса по цветам кристаллизующейся фазы /
+   * Liquidus branches colored by the crystallizing phase */
+  const seg = (x1, x2, col) => {
+    p.stroke(col[0], col[1], col[2]);
+    p.beginShape();
+    pts.forEach(pt => {
+      if (pt[0] >= x1 - 1e-9 && pt[0] <= x2 + 1e-9) p.vertex(xToPx(pt[0]), tToPx(pt[1]));
+    });
+    p.endShape();
+  };
+  seg(0, me.x1, COL.A_DARK);                     // ветвь A / A branch
+  seg(me.x1, c.xABpct, COL.AB_LINE);             // соединение слева / compound, left side
+  seg(c.xABpct, me.x2, COL.AB_LINE);             // соединение справа / compound, right side
+  seg(me.x2, 100, COL.B_DARK);                   // ветвь B / B branch
+
+  /* Две эвтектические горизонтали (солидусы) / Two eutectic horizontals (solidus lines) */
+  p.stroke(60); p.strokeWeight(2);
+  p.line(xToPx(0), tToPx(me.T1), xToPx(c.xABpct), tToPx(me.T1));
+  p.line(xToPx(c.xABpct), tToPx(me.T2), xToPx(100), tToPx(me.T2));
+
+  /* Вертикальная линия соединения #D2691E: при анимации "растёт" вниз от пика /
+   * Compound vertical line #D2691E: "grows" downward from the peak when animated */
+  const peakT = morphAt(pts, c.xABpct);
+  const bottomT = lerpAB(peakT, view.tBottom, t);
+  p.stroke(COL.AB_LINE[0], COL.AB_LINE[1], COL.AB_LINE[2]); p.strokeWeight(2.5);
+  p.line(xToPx(c.xABpct), tToPx(peakT), xToPx(c.xABpct), tToPx(bottomT));
+  p.strokeWeight(1);
+}
+
+/*
+ * Подписи зон в режиме соединения / Zone labels in compound mode.
+ * Узкие зоны: полный текст → короткий → пропуск / Narrow zones: full → short → skip.
+ */
+function drawZoneLabelsCompound(p, t) {
+  const c = model.compound;
+  const me = morphEutectics(t);
+  const pts = morphPoints(t);
+  const a = Math.round(255 * t);
+  if (a <= 3) return;
+  const F = c.formula;
+  const M = x => morphAt(pts, x);
+  p.noStroke(); p.textSize(12); p.textStyle(p.BOLD); p.textAlign(p.CENTER, p.CENTER);
+
+  /* Liquid — по центру, но не на пике соединения /
+   * Liquid — centered, but not on the compound peak */
+  const liquidX = Math.abs(50 - c.xABpct) > 12 ? 50 : (c.xABpct < 50 ? 75 : 25);
+  p.fill(150, 60, 90, a);
+  p.text('Liquid / Жидкость', xToPx(liquidX), tToPx((M(liquidX) + view.tTop) / 2));
+
+  /* Универсальная подпись линзы с адаптивной длиной /
+   * Universal lens label with adaptive length */
+  const lensLabel = (xFrom, xTo, TE, full, short, col) => {
+    const wPx = (xTo - xFrom) / 100 * (PX.x1 - PX.x0);
+    if (wPx < 34) return;
+    const xMid = (xFrom + xTo) / 2;
+    const tMid = TE + 0.25 * (M(xMid) - TE);
+    p.fill(col[0], col[1], col[2], a);
+    p.text(wPx >= 92 ? full : short, xToPx(xMid), tToPx(tMid));
+  };
+  lensLabel(0, me.x1, me.T1, 'L + A(тв)', 'L+A', COL.A_DARK);
+  lensLabel(me.x1, c.xABpct, me.T1, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
+  lensLabel(c.xABpct, me.x2, me.T2, 'L + ' + F + '(тв)', 'L+' + F, COL.AB_DARK);
+  lensLabel(me.x2, 100, me.T2, 'L + B(тв)', 'L+B', COL.B_DARK);
+
+  /* Твёрдые зоны / solid zones */
+  const solidLabel = (xFrom, xTo, TE, full, short) => {
+    const wPx = (xTo - xFrom) / 100 * (PX.x1 - PX.x0);
+    if (wPx < 56) return;
+    p.fill(90, 90, 90, a);
+    p.text(wPx >= 120 ? full : short, xToPx((xFrom + xTo) / 2), Math.min(tToPx(TE) + 20, PX.y1 - 12));
+  };
+  solidLabel(0, c.xABpct, me.T1, 'A(тв) + ' + F + '(тв)', 'A + ' + F);
+  solidLabel(c.xABpct, 100, me.T2, F + '(тв) + B(тв)', F + ' + B');
+  p.textStyle(p.NORMAL);
+}
+
+/*
+ * Метки режима соединения: эвтектики E1/E2, пик соединения, формула у
+ * вертикальной линии. Все элементы проявляются с параметром морфинга.
+ * Compound-mode marks: eutectics E1/E2, the compound peak, the formula next
+ * to the vertical line. Everything fades in with the morph parameter.
+ */
+function drawCompoundMarks(p, t) {
+  const c = model.compound;
+  const me = morphEutectics(t);
+  const pts = morphPoints(t);
+  const a = Math.round(255 * t);
+  if (a <= 3) return;
+  const F = c.formula;
+
+  /* Маркеры и подписи E1/E2 / E1/E2 markers and labels */
+  const mark = (xE, TE, name) => {
+    const px = xToPx(xE), py = tToPx(TE);
+    p.stroke(20, 20, 20, a); p.strokeWeight(1.5); p.fill(255, 255, 255, a);
+    p.circle(px, py, 9);
+    p.noStroke(); p.fill(20, 20, 20, a); p.textSize(11); p.textStyle(p.BOLD);
+    const txt = name + ': ' + xE.toFixed(1) + '%, ' + TE.toFixed(0) + '°C';
+    /* Подпись слева, если помещается, иначе справа / label left if it fits, else right */
+    const putLeft = (name === 'Эвтектика E1' ? px > PX.x0 + 150 : px > PX.x1 - 60);
+    p.textAlign(putLeft ? p.RIGHT : p.LEFT, p.BOTTOM);
+    p.stroke(255, 255, 255, a); p.strokeWeight(3);
+    p.text(txt, px + (putLeft ? -10 : 10), py - 14);
+    p.noStroke();
+    p.text(txt, px + (putLeft ? -10 : 10), py - 14);
+  };
+  mark(me.x1, me.T1, 'Эвтектика E1 / Eutectic E1');
+  mark(me.x2, me.T2, 'Эвтектика E2 / Eutectic E2');
+
+  /* Пик соединения (конгруэнтное плавление) / Compound peak (congruent melting) */
+  const peakT = morphAt(pts, c.xABpct);
+  const pxP = xToPx(c.xABpct), pyP = tToPx(peakT);
+  p.stroke(120, 60, 0, a); p.strokeWeight(1.5); p.fill(COL.AB[0], COL.AB[1], COL.AB[2], a);
+  p.circle(pxP, pyP, 10);
+  p.strokeWeight(1);
+
+  /* Формула у вертикальной линии (тултип дублирует её при наведении) /
+   * Formula next to the vertical line (a tooltip repeats it on hover) */
+  p.noStroke(); p.fill(COL.AB_DARK[0], COL.AB_DARK[1], COL.AB_DARK[2], a);
+  p.textSize(12); p.textStyle(p.BOLD);
+  const onRight = pxP < PX.x1 - 50;
+  p.textAlign(onRight ? p.LEFT : p.RIGHT, p.CENTER);
+  const labelT = (peakT + Math.max(me.T1, me.T2)) / 2;
+  const ty = clamp(tToPx(labelT), PX.y0 + 10, PX.y1 - 10);
+  p.stroke(255, 255, 255, a); p.strokeWeight(3);
+  p.text(F, pxP + (onRight ? 7 : -7), ty);
+  p.noStroke();
+  p.text(F, pxP + (onRight ? 7 : -7), ty);
   p.strokeWeight(1);
   p.textStyle(p.NORMAL); p.textAlign(p.LEFT, p.BASELINE);
 }
@@ -992,6 +1826,7 @@ function drawPhasePoint(p) {
 function handleDiagramPick(p) {
   const mx = p.mouseX, my = p.mouseY;
   if (mx < PX.x0 - 4 || mx > PX.x1 + 4 || my < PX.y0 - 4 || my > PX.y1 + 4) return;
+  finishCompoundAnim();      // ввод прерывает анимацию / input interrupts the animation
   state.xB = pxToX(mx);
   /* Температура ограничена шкалой слайдера / temperature limited to the slider scale */
   state.T_C = clamp(pxToT(my), T_MIN_C, T_MAX_C);
@@ -1040,7 +1875,20 @@ function getMicroCache() {
     for (let j = 0; j < 8; j++) verts.push(0.72 + 0.45 * rnd()); // радиус по вершинам / per-vertex radius factor
     polys.push({ verts: verts, rot: rnd() * Math.PI * 2 });
   }
-  MIC_CACHE = { squares: squares, polys: polys };
+  /* v3.0: плавающие гексагоны соединения / v3.0: floating compound hexagons */
+  const hexes = [];
+  for (let i = 0; i < 90; i++) {
+    hexes.push({ u: rnd(), v: rnd(), s: 10 + rnd() * 7, rot: rnd() * Math.PI * 2 });
+  }
+  /* v3.0: первичные гексагоны соединения (слегка неровные) /
+   * v3.0: primary compound hexagons (slightly irregular) */
+  const hexPolys = [];
+  for (let i = 0; i < 16; i++) {
+    const verts = [];
+    for (let j = 0; j < 6; j++) verts.push(0.88 + 0.22 * rnd()); // почти правильный шестиугольник / nearly regular hexagon
+    hexPolys.push({ verts: verts, rot: rnd() * Math.PI * 2 });
+  }
+  MIC_CACHE = { squares: squares, polys: polys, hexes: hexes, hexPolys: hexPolys };
   return MIC_CACHE;
 }
 
@@ -1147,6 +1995,120 @@ function drawPrimaryCrystals(p, isA, fPrimary) {
   p.strokeWeight(1);
 }
 
+/* ============================================================================
+ * v3.0: КРИСТАЛЛЫ СОЕДИНЕНИЯ В МИКРОСТРУКТУРЕ
+ * v3.0: COMPOUND CRYSTALS IN THE MICROSTRUCTURE
+ * Соединение всегда оранжевое (#FFA500) и всегда ШЕСТИУГРАННОЕ — чтобы
+ * отличать его от квадратиков/многоугольников компонентов A и B.
+ * The compound is always orange (#FFA500) and always HEXAGONAL — to distinguish
+ * it from the squares/polygons of components A and B.
+ * ========================================================================== */
+
+/*
+ * Плавающие гексагоны соединения в жидкости (двухфазная область L+AB).
+ * Floating compound hexagons in the liquid (L+AB two-phase region).
+ */
+function drawFloatingHexes(p, ph) {
+  const cache = getMicroCache();
+  const fSolid = ph.fSolidAB / 100;
+  const n = Math.round(clamp(fSolid, 0, 1) * cache.hexes.length);
+  for (let i = 0; i < n; i++) {
+    const hx = cache.hexes[i];
+    const cx = MX.x0 + hx.u * (MX.x1 - MX.x0);
+    const cy = MX.y0 + hx.v * (MX.y1 - MX.y0);
+    drawHexagon(p, cx, cy, hx.s, hx.rot, COL.AB, COL.AB_DARK);
+  }
+}
+
+/* Один шестиугольник / A single hexagon */
+function drawHexagon(p, cx, cy, r, rot, fill, stroke) {
+  p.push();
+  p.translate(cx, cy);
+  p.fill(fill[0], fill[1], fill[2]); p.stroke(stroke[0], stroke[1], stroke[2]); p.strokeWeight(1);
+  p.beginShape();
+  for (let j = 0; j < 6; j++) {
+    const a = (j / 6) * Math.PI * 2 + rot;
+    p.vertex(Math.cos(a) * r, Math.sin(a) * r);
+  }
+  p.endShape(p.CLOSE);
+  p.pop();
+}
+
+/*
+ * Первичные кристаллы соединения: крупные шестиугольники, площадь — по
+ * правилу рычага непосредственно выше эвтектической температуры подсистемы.
+ * Primary compound crystals: large hexagons; area follows the lever rule
+ * applied just above the subsystem eutectic temperature.
+ */
+function drawPrimaryHexes(p, fPrimaryAB) {
+  if (fPrimaryAB <= 0.002) return;
+  const cache = getMicroCache();
+  const n = Math.round(clamp(6 + fPrimaryAB * 14, 3, 16));
+  const r = clamp(Math.sqrt((fPrimaryAB / 100) * MIC_AREA / (n * Math.PI)), 12, 44);
+  const cols = Math.max(1, Math.ceil(Math.sqrt(n * 0.56)));
+  const rows = Math.max(1, Math.ceil(n / cols));
+  const cw = (MX.x1 - MX.x0) / cols, ch = (MX.y1 - MX.y0) / rows;
+  p.strokeWeight(2);
+  for (let i = 0; i < n; i++) {
+    const col = i % cols, row = Math.floor(i / cols);
+    const jx = (((i * 137) % 100) / 100 - 0.5) * (cw - 2 * r) * 0.7;
+    const jy = (((i * 61) % 100) / 100 - 0.5) * (ch - 2 * r) * 0.7;
+    const cx = clamp(MX.x0 + (col + 0.5) * cw + jx, MX.x0 + r * 0.4, MX.x1 - r * 0.4);
+    const cy = clamp(MX.y0 + (row + 0.5) * ch + jy, MX.y0 + r * 0.4, MX.y1 - r * 0.4);
+    const hp = cache.hexPolys[i % cache.hexPolys.length];
+    p.fill(COL.AB[0], COL.AB[1], COL.AB[2]); p.stroke(COL.AB_DARK[0], COL.AB_DARK[1], COL.AB_DARK[2]);
+    p.beginShape();
+    for (let j = 0; j < 6; j++) {
+      const a = (j / 6) * Math.PI * 2 + hp.rot;
+      const rad = r * hp.verts[j];
+      p.vertex(cx + Math.cos(a) * rad, cy + Math.sin(a) * rad);
+    }
+    p.endShape(p.CLOSE);
+  }
+  p.strokeWeight(1);
+}
+
+/*
+ * Эвтектическая смесь с участием соединения: 'A+AB' (фиолет/оранж) или
+ * 'AB+B' (оранж/зелён). Ширины полос пропорциональны долям фаз в эвтектике.
+ * Eutectic mixture involving the compound: 'A+AB' (purple/orange) or
+ * 'AB+B' (orange/green). Stripe widths follow the phase shares in the eutectic.
+ */
+function drawEutecticStripesCompound(p, type, fracSecond) {
+  const f2 = clamp(fracSecond === undefined ? 0.5 : fracSecond, 0, 1);
+  const c1 = type === 'A+AB' ? COL.A : COL.AB;      // первая фаза / first phase
+  const c2 = type === 'A+AB' ? COL.AB : COL.B;      // вторая фаза / second phase
+  const w1 = clamp(7 * (1 - f2), 1.5, 5.5);
+  const w2 = clamp(7 * f2, 1.5, 5.5);
+  p.noStroke();
+  let x = MX.x0;
+  while (x < MX.x1) {
+    p.fill(c1[0], c1[1], c1[2]);
+    p.rect(x, MX.y0, Math.min(w1, MX.x1 - x), MX.y1 - MX.y0);
+    p.fill(c2[0], c2[1], c2[2]);
+    p.rect(x + w1, MX.y0, Math.min(w2, MX.x1 - x - w1), MX.y1 - MX.y0);
+    x += w1 + w2;
+  }
+}
+
+/*
+ * Чистое соединение (x = x_AB ниже солидуса): однородная оранжевая структура
+ * БЕЗ эвтектики — оранжевый фон + текстура из чуть более тёмных гексагонов.
+ * Pure compound (x = x_AB below the solidus): uniform orange structure with
+ * NO eutectic — orange background plus slightly darker hexagon texture.
+ */
+function drawPureCompoundFill(p) {
+  p.fill(COL.AB[0], COL.AB[1], COL.AB[2]);
+  p.noStroke();
+  p.rect(MX.x0, MX.y0, MX.x1 - MX.x0, MX.y1 - MX.y0);
+  const cache = getMicroCache();
+  for (let i = 0; i < 14; i++) {
+    const hx = cache.hexes[(i * 5 + 3) % cache.hexes.length];
+    const shade = (i % 2 === 0) ? [235, 150, 20] : [245, 178, 40];   // вариации оранжевого / orange shades
+    drawHexagon(p, MX.x0 + hx.u * (MX.x1 - MX.x0), MX.y0 + hx.v * (MX.y1 - MX.y0), hx.s + 6, hx.rot, shade, COL.AB_DARK);
+  }
+}
+
 /*
  * Отрисовка микроструктуры.
  * Draw microstructure.
@@ -1178,6 +2140,11 @@ function drawMicrostructure(p) {
      * State 2: liquid + floating A (purple) or B (green) crystals */
     drawLiquidFill(p);
     drawFloatingCrystals(p, ph);
+  } else if (ph.kind === 'L+AB') {
+    /* v3.0, состояние 2: жидкость + плавающие ОРАНЖЕВЫЕ ШЕСТИУГОЛЬНИКИ соединения /
+     * v3.0, state 2: liquid + floating ORANGE HEXAGONS of the compound */
+    drawLiquidFill(p);
+    drawFloatingHexes(p, ph);
   } else {
     /* Состояние 3: полностью твёрдое / State 3: fully solid */
     if (ph.pure === 'A') {
@@ -1186,10 +2153,20 @@ function drawMicrostructure(p) {
     } else if (ph.pure === 'B') {
       p.fill(COL.B[0], COL.B[1], COL.B[2]);
       p.rect(MX.x0, MX.y0, MX.x1 - MX.x0, MX.y1 - MX.y0);
+    } else if (ph.pure === 'AB') {
+      /* v3.0: чистое соединение — однородная оранжевая структура без эвтектики /
+       * v3.0: pure compound — uniform orange structure without eutectic */
+      drawPureCompoundFill(p);
     } else {
       /* Эвтектическая матрица + первичные кристаллы / eutectic matrix + primary crystals */
-      drawEutecticStripes(p);
-      if (ph.fPrimaryA > 0) drawPrimaryCrystals(p, true, ph.fPrimaryA);
+      /* v3.0: тип эвтектики A+AB или AB+B / v3.0: eutectic type A+AB or AB+B */
+      if (state.showCompound && model.compound && !model.compound.unstable && ph.eutecticType) {
+        drawEutecticStripesCompound(p, ph.eutecticType, ph.eutFrac2);
+      } else {
+        drawEutecticStripes(p);
+      }
+      if (ph.fPrimaryAB > 0) drawPrimaryHexes(p, ph.fPrimaryAB);
+      else if (ph.fPrimaryA > 0) drawPrimaryCrystals(p, true, ph.fPrimaryA);
       else drawPrimaryCrystals(p, false, ph.fPrimaryB);
     }
   }
@@ -1215,6 +2192,8 @@ function shortName(s) { return s.length > 12 ? s.slice(0, 11) + '…' : s; }
 function drawMicroLabels(p, ph) {
   const y = MX.y1 + 24;
   const sA = shortName(state.nameA), sB = shortName(state.nameB);
+  const compoundActive = state.showCompound && model.compound && !model.compound.unstable;
+  const F = compoundActive ? model.compound.formula : getFormulaString(state.m, state.n);
   p.noStroke(); p.textAlign(p.CENTER, p.TOP); p.textSize(13); p.textStyle(p.BOLD);
   let c = [40, 40, 40];
   let line1 = '', line2 = '', line3 = '';
@@ -1223,6 +2202,7 @@ function drawMicroLabels(p, ph) {
     case 'LIQUID':
       line1 = ph.pure === 'A' ? 'Расплав ' + sA + ' / ' + sA + ' melt'
             : ph.pure === 'B' ? 'Расплав ' + sB + ' / ' + sB + ' melt'
+            : ph.pure === 'AB' ? 'Расплав ' + F + ' / ' + F + ' melt'
             : 'Жидкость / Liquid';
       line2 = 'Однофазная область: кристаллов нет / Single phase: no crystals';
       c = [170, 70, 100];
@@ -1239,6 +2219,16 @@ function drawMicroLabels(p, ph) {
       line3 = 'Жидкость обогащена A: x_ж = ' + ph.xLiquid.toFixed(1) + '% B / liquid enriched in A';
       c = COL.B_DARK;
       break;
+    case 'L+AB':
+      /* v3.0: кристаллизуется соединение (оранжевые шестиугольники) /
+       * v3.0: the compound crystallizes (orange hexagons) */
+      line1 = 'Жидкость + кристаллы ' + F + ' / Liquid + ' + F + ' crystals';
+      line2 = 'Твёрдое: ' + ph.fSolidAB.toFixed(1) + '% • Жидкость: ' + ph.fLiquid.toFixed(1) + '%';
+      line3 = ph.xLiquid < ph.x
+        ? 'Жидкость обогащена A: x_ж = ' + ph.xLiquid.toFixed(1) + '% B / liquid enriched in A'
+        : 'Жидкость обогащена B: x_ж = ' + ph.xLiquid.toFixed(1) + '% B / liquid enriched in B';
+      c = COL.AB_DARK;
+      break;
     case 'SOLID':
       if (ph.pure === 'A') {
         line1 = 'Твёрдый чистый ' + sA + ' / Pure solid A';
@@ -1248,19 +2238,40 @@ function drawMicroLabels(p, ph) {
         line1 = 'Твёрдый чистый ' + sB + ' / Pure solid B';
         line2 = '100% фазы B / 100% phase B';
         c = COL.B_DARK;
+      } else if (ph.pure === 'AB') {
+        /* v3.0: чистое соединение / v3.0: pure compound */
+        line1 = 'Чистое соединение ' + F + ' / Pure compound ' + F;
+        line2 = '100% фазы ' + F + ' — однородная структура, без эвтектики / uniform, no eutectic';
+        c = COL.AB_DARK;
       } else if (ph.eutecticStructure) {
         line1 = 'Эвтектика / Eutectic structure';
-        line2 = '100% эвтектической смеси (A ' + ph.fSolidA.toFixed(0) + '% + B ' + ph.fSolidB.toFixed(0) + '%) / 100% eutectic';
+        if (compoundActive) {
+          line2 = '100% эвтектики (' + ph.eutecticType + '): ' + F + ' ' + ph.fSolidAB.toFixed(0) + '% + ' +
+            (ph.eutecticType === 'AB+B' ? 'B ' : 'A ') + (ph.eutecticType === 'AB+B' ? ph.fSolidB.toFixed(0) : ph.fSolidA.toFixed(0)) + '% / 100% eutectic';
+        } else {
+          line2 = '100% эвтектической смеси (A ' + ph.fSolidA.toFixed(0) + '% + B ' + ph.fSolidB.toFixed(0) + '%) / 100% eutectic';
+        }
         c = [80, 80, 80];
+      } else if (compoundActive && ph.fPrimaryAB > 0) {
+        line1 = 'Первичные ' + F + ' + эвтектика / Primary ' + F + ' + eutectic';
+        line2 = 'Первичные: ' + ph.fPrimaryAB.toFixed(1) + '% • Эвтектика (' + ph.eutecticType + '): ' + ph.fEutectic.toFixed(1) + '%';
+        line3 = 'Всего ' + F + ': ' + ph.fSolidAB.toFixed(1) + '% • A: ' + ph.fSolidA.toFixed(1) + '% • B: ' + ph.fSolidB.toFixed(1) + '%';
+        c = COL.AB_DARK;
       } else if (ph.fPrimaryA > 0) {
-        line1 = 'Первичные A + эвтектика / Primary A + eutectic';
+        line1 = compoundActive ? 'Первичные A + эвтектика (' + ph.eutecticType + ') / Primary A + eutectic'
+                              : 'Первичные A + эвтектика / Primary A + eutectic';
         line2 = 'Первичные: ' + ph.fPrimaryA.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '%';
-        line3 = 'Всего фазы A (' + sA + '): ' + ph.fSolidA.toFixed(1) + '% • фазы B (' + sB + '): ' + ph.fSolidB.toFixed(1) + '%';
+        line3 = compoundActive
+          ? 'Всего A: ' + ph.fSolidA.toFixed(1) + '% • ' + F + ': ' + ph.fSolidAB.toFixed(1) + '%'
+          : 'Всего фазы A (' + sA + '): ' + ph.fSolidA.toFixed(1) + '% • фазы B (' + sB + '): ' + ph.fSolidB.toFixed(1) + '%';
         c = COL.A_DARK;
       } else {
-        line1 = 'Первичные B + эвтектика / Primary B + eutectic';
+        line1 = compoundActive ? 'Первичные B + эвтектика (' + ph.eutecticType + ') / Primary B + eutectic'
+                              : 'Первичные B + эвтектика / Primary B + eutectic';
         line2 = 'Первичные: ' + ph.fPrimaryB.toFixed(1) + '% • Эвтектика: ' + ph.fEutectic.toFixed(1) + '%';
-        line3 = 'Всего фазы B (' + sB + '): ' + ph.fSolidB.toFixed(1) + '% • фазы A (' + sA + '): ' + ph.fSolidA.toFixed(1) + '%';
+        line3 = compoundActive
+          ? 'Всего B: ' + ph.fSolidB.toFixed(1) + '% • ' + F + ': ' + ph.fSolidAB.toFixed(1) + '%'
+          : 'Всего фазы B (' + sB + '): ' + ph.fSolidB.toFixed(1) + '% • фазы A (' + sA + '): ' + ph.fSolidA.toFixed(1) + '%';
         c = COL.B_DARK;
       }
       break;
@@ -1286,6 +2297,8 @@ const diagramSketch = (p) => {
   p.draw = () => drawPhaseDiagram(p);
   p.mousePressed = () => handleDiagramPick(p);
   p.mouseDragged = () => handleDiagramPick(p);
+  /* v3.0: тултип вертикальной линии соединения / v3.0: compound vertical line tooltip */
+  p.mouseMoved = () => handleCompoundTooltip(p);
 };
 
 /* Скоут микроструктуры / Microstructure sketch */
@@ -1317,13 +2330,169 @@ function toggleCooling() {
   }, 40);
 }
 
+/* ============================================================================
+ * v3.0: АНИМАЦИЯ "ВЫРАСТАНИЯ" ГОРБА, ТУЛТИП, КНОПКА "ПОДЕЛИТЬСЯ"
+ * v3.0: "HUMP GROWTH" ANIMATION, TOOLTIP, "SHARE" BUTTON
+ * ========================================================================== */
+
+/*
+ * Анимация перехода (рекомендация 9.2): параметр морфинга compT плавно
+ * меняется 0→1 (включение) или 1→0 (выключение); оба холста перерисовываются
+ * на каждом кадре. Любое изменение параметров мгновенно завершает анимацию.
+ * Transition animation (recommendation 9.2): the morph parameter compT moves
+ * smoothly 0→1 (enable) or 1→0 (disable); both canvases redraw every frame.
+ * Any parameter change instantly finishes the animation.
+ */
+const compoundAnim = { active: false, raf: null, t0: 0, from: 0, to: 1, dur: AB_ANIM_MS };
+
+function startCompoundAnim(targetOn) {
+  if (compoundAnim.raf) cancelAnimationFrame(compoundAnim.raf);
+  compoundAnim.active = true;
+  compoundAnim.from = compT;
+  compoundAnim.to = targetOn ? 1 : 0;
+  compoundAnim.dur = targetOn ? AB_ANIM_MS : AB_ANIM_OUT_MS;
+  compoundAnim.t0 = performance.now();
+  const step = (now) => {
+    if (!compoundAnim.active) return;
+    const raw = clamp((now - compoundAnim.t0) / compoundAnim.dur, 0, 1);
+    /* easeInOutQuad для плавности / easeInOutQuad for smoothness */
+    const e = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+    compT = lerpAB(compoundAnim.from, compoundAnim.to, e);
+    if (diagP) diagP.redraw();
+    if (raw < 1) {
+      compoundAnim.raf = requestAnimationFrame(step);
+    } else {
+      compoundAnim.active = false; compoundAnim.raf = null; compT = compoundAnim.to;
+      if (!targetOn) {
+        /* Конец обратной анимации: полностью выключить режим /
+         * Reverse animation finished: switch the mode fully off */
+        state.showCompound = false;
+        el['in-showAB'].checked = false;
+        recomputeAll();
+      }
+    }
+  };
+  compoundAnim.raf = requestAnimationFrame(step);
+}
+
+/* Мгновенное завершение анимации (при любом вводе пользователя) /
+ * Instantly finish the animation (on any user input) */
+function finishCompoundAnim() {
+  if (!compoundAnim.active) return;
+  if (compoundAnim.raf) cancelAnimationFrame(compoundAnim.raf);
+  compoundAnim.active = false; compoundAnim.raf = null;
+  compT = compoundAnim.to;
+  if (compoundAnim.to === 0) {
+    state.showCompound = false;
+    el['in-showAB'].checked = false;
+  }
+}
+
+/*
+ * Тултип вертикальной линии соединения (рекомендация 9.3).
+ * Tooltip of the compound vertical line (recommendation 9.3).
+ */
+function handleCompoundTooltip(p) {
+  const tip = el['tooltip'];
+  if (!tip) return;
+  const show = state.showCompound && model && model.compound && !model.compound.unstable;
+  if (!show) { tip.style.display = 'none'; return; }
+  const c = model.compound;
+  const px = xToPx(c.xABpct);
+  const peakT = Math.min(state.TmAB_C, view.tTop);
+  /* Курсор рядом с линией и ниже пика / cursor near the line, below the peak */
+  if (Math.abs(p.mouseX - px) <= 6 && p.mouseY >= tToPx(peakT) - 6 && p.mouseY <= PX.y1 + 6) {
+    tip.innerHTML = '<b>' + c.formula + '</b> (A' + (state.m === 1 ? '' : state.m) + 'B' + (state.n === 1 ? '' : state.n) + ')<br>' +
+      'x = ' + c.xABpct.toFixed(1) + '% B<br>T_пл = ' + state.TmAB_C.toFixed(0) + ' °C<br>' +
+      'ΔH_пл = ' + state.dH_AB + ' Дж/моль';
+    tip.style.left = Math.min(p.mouseX + 14, DIAG_W - 150) + 'px';
+    tip.style.top = (p.mouseY + 14) + 'px';
+    tip.style.display = 'block';
+  } else {
+    tip.style.display = 'none';
+  }
+}
+
+/*
+ * Кнопка "Поделиться" (рекомендация 9.4): все параметры кодируются в hash URL.
+ * "Share" button (recommendation 9.4): all parameters are encoded into the URL hash.
+ */
+function buildShareHash() {
+  const q = new URLSearchParams();
+  q.set('v', '3');
+  q.set('ta', state.TmA_C); q.set('ha', state.dH_A);
+  q.set('tb', state.TmB_C); q.set('hb', state.dH_B);
+  q.set('x', state.xB); q.set('T', state.T_C);
+  q.set('c', state.showCompound ? '1' : '0');
+  q.set('m', state.m); q.set('n', state.n);
+  q.set('tab', state.TmAB_C); q.set('hab', state.dH_AB);
+  if (state.nameA !== 'Компонент A') q.set('na', state.nameA);
+  if (state.nameB !== 'Компонент B') q.set('nb', state.nameB);
+  return '#' + q.toString();
+}
+
+function shareState() {
+  const url = location.origin === 'null' || !location.origin
+    ? location.href.split('#')[0] + buildShareHash()     // file:// / local file
+    : location.origin + location.pathname + buildShareHash();
+  try { history.replaceState(null, '', buildShareHash()); } catch (e) { location.hash = buildShareHash().slice(1); }
+  const done = () => showToast('✓ Ссылка скопирована / Link copied');
+  const fallback = () => showToast('✓ Ссылка в адресной строке / Link is in the address bar');
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(done, fallback);
+  } else {
+    fallback();
+  }
+}
+
+/* Восстановление состояния из hash URL при загрузке / Restore state from the URL hash on load */
+function applyShareHash() {
+  if (!location.hash || location.hash.length < 2) return;
+  const q = new URLSearchParams(location.hash.slice(1));
+  const num = (k, def) => { const v = parseFloat(q.get(k)); return isNaN(v) ? def : v; };
+  state.TmA_C = num('ta', state.TmA_C);
+  state.dH_A = num('ha', state.dH_A);
+  state.TmB_C = num('tb', state.TmB_C);
+  state.dH_B = num('hb', state.dH_B);
+  state.xB = num('x', state.xB);
+  state.T_C = num('T', state.T_C);
+  state.TmAB_C = num('tab', state.TmAB_C);
+  state.dH_AB = num('hab', state.dH_AB);
+  state.m = num('m', state.m);
+  state.n = num('n', state.n);
+  state.showCompound = q.get('c') === '1';
+  if (q.get('na')) state.nameA = q.get('na');
+  if (q.get('nb')) state.nameB = q.get('nb');
+  /* Записать восстановленные значения в поля ввода / Write restored values into the inputs */
+  el['in-tmA'].value = String(state.TmA_C); el['in-dhA'].value = String(state.dH_A);
+  el['in-tmB'].value = String(state.TmB_C); el['in-dhB'].value = String(state.dH_B);
+  el['in-tmAB'].value = String(state.TmAB_C); el['in-dhAB'].value = String(state.dH_AB);
+  el['in-m'].value = String(state.m); el['in-n'].value = String(state.n);
+  el['in-showAB'].checked = state.showCompound;
+  el['in-nameA'].value = state.nameA; el['in-nameB'].value = state.nameB;
+  el['in-x'].value = String(state.xB); el['in-T'].value = String(state.T_C);   // слайдеры тоже / sliders too
+  compT = state.showCompound ? 1 : 0;   // без анимации при загрузке / no animation on load
+}
+
+/* Всплывающее уведомление / Toast notification */
+let toastTimer = null;
+function showToast(msg) {
+  const t = el['toast'];
+  t.textContent = msg;
+  t.style.display = 'block';
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.display = 'none'; }, 1800);
+}
+
 /* Инициализация / Initialization */
 function init() {
   cacheElements();
+  applyShareHash();                 // v3.0: восстановление состояния из URL / restore state from the URL
 
   /* Все поля ввода обновляют модель в реальном времени /
    * All inputs update the model in real time */
-  ['in-nameA', 'in-nameB', 'in-tmA', 'in-tmB', 'in-dhA', 'in-dhB', 'in-x', 'in-T']
+  ['in-nameA', 'in-nameB', 'in-tmA', 'in-tmB', 'in-dhA', 'in-dhB', 'in-x', 'in-T',
+   'in-m', 'in-n', 'in-tmAB', 'in-dhAB']
     .forEach(id => el[id].addEventListener('input', onControlInput));
 
   /* Числовые поля: при завершении ввода (blur/Enter) — нормализация и запись
@@ -1331,10 +2500,27 @@ function init() {
    * Numeric fields: when editing is finished (blur/Enter) — normalize and
    * write the normalized values back into the fields */
   NUM_FIELDS.forEach(f => el[f.id].addEventListener('change', commitNumericFields));
+  /* v3.0: стехиометрия — отдельная нормализация целых чисел /
+   * v3.0: stoichiometry — separate integer normalization */
+  MN_FIELDS.forEach(f => el[f.id].addEventListener('change', commitMnFields));
 
   el['btn-cool'].addEventListener('click', toggleCooling);
   el['btn-save-diag'].addEventListener('click', () => diagP.saveCanvas('phase_diagram', 'png'));
   el['btn-save-micro'].addEventListener('click', () => microP.saveCanvas('microstructure', 'png'));
+  /* v3.0: чекбокс запускает анимацию "вырастания" горба. Модель соединения
+   * должна существовать во время ОБЕИХ анимаций, поэтому showCompound
+   * принудительно true; выключение происходит в конце обратной анимации /
+   * v3.0: the checkbox starts the hump-growth animation. The compound model
+   * must exist during BOTH animations, so showCompound is forced true;
+   * switching off happens at the end of the reverse animation */
+  el['in-showAB'].addEventListener('change', () => {
+    const targetOn = el['in-showAB'].checked;
+    readControls();
+    state.showCompound = true;
+    recomputeAll();               // модель соединения нужна ДО анимации / compound model needed BEFORE the animation
+    startCompoundAnim(targetOn);
+  });
+  el['btn-share'].addEventListener('click', shareState);
 
   /* Первый расчёт и запуск скоутов / First computation and sketch launch */
   readControls();
@@ -1347,7 +2533,20 @@ function init() {
  * Export for browser-console debugging/tests */
 window.APP = { state: state, model: () => model, recomputeAll: recomputeAll,
   liquidusTempA: liquidusTempA, liquidusTempB: liquidusTempB,
-  liquidCompositionAtTemp: liquidCompositionAtTemp };
+  liquidCompositionAtTemp: liquidCompositionAtTemp,
+  /* v3.0 / v3.0 */
+  calculateSubsystems: calculateSubsystems, calculateEutectic1: calculateEutectic1,
+  calculateEutectic2: calculateEutectic2, liquidusTempAB_left: liquidusTempAB_left,
+  liquidusTempAB_right: liquidusTempAB_right, liquidusTempA_sub1: liquidusTempA_sub1,
+  liquidusTempB_sub2: liquidusTempB_sub2, getFormulaString: getFormulaString,
+  setCompound: function (show, m, n, TmAB, dHAB) {
+    if (m !== undefined) { state.m = m; el['in-m'].value = String(m); }
+    if (n !== undefined) { state.n = n; el['in-n'].value = String(n); }
+    if (TmAB !== undefined) { state.TmAB_C = TmAB; el['in-tmAB'].value = String(TmAB); }
+    if (dHAB !== undefined) { state.dH_AB = dHAB; el['in-dhAB'].value = String(dHAB); }
+    state.showCompound = !!show; el['in-showAB'].checked = !!show; compT = show ? 1 : 0;
+    recomputeAll();
+  } };
 
 document.addEventListener('DOMContentLoaded', init);
 
